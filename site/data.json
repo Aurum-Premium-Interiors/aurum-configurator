@@ -1,0 +1,1328 @@
+{
+  "meta": {
+    "brand": "Aurum Premium Interiors",
+    "version": "0.3-prototype",
+    "logo": "images/aurum-logo.png"
+  },
+  "appName": {
+    "en": "Kitchen configurator",
+    "nl": "Keukenplanner"
+  },
+  "languages": [
+    {
+      "id": "en",
+      "label": "EN"
+    },
+    {
+      "id": "nl",
+      "label": "NL"
+    }
+  ],
+  "defaultLang": "en",
+  "content": {
+    "en": {
+      "home": {
+        "headline": "Eight questions. Your kitchen direction.",
+        "howItWorks": "Answer eight questions, about two minutes, to find your kitchen style and starting budget.",
+        "button": "Start",
+        "trust": "Designed and built by Aurum Premium Interiors in our own workshop in Monnickendam."
+      },
+      "ui": {
+        "back": "Back",
+        "continue": "Continue",
+        "restart": "Start again",
+        "errorTitle": "The configurator could not load",
+        "errorText": "Check your connection and try again.",
+        "errorRetry": "Try again",
+        "prototypeNote": "Prototype figure, not a real price.",
+        "lengthRangeError": "Enter a length between {min} and {max} {unit}, for example 8,6.",
+        "stepOf": "{n} of {total}",
+        "missing": "To continue, please answer:"
+      },
+      "questions": [
+        {
+          "id": "location",
+          "summary": "Location",
+          "title": "Where in the Netherlands is the kitchen?",
+          "help": "We work mainly in Amsterdam and Noord-Holland. Choose Amsterdam or your province.",
+          "groups": [
+            {
+              "id": "location",
+              "type": "select",
+              "label": "Area",
+              "default": "amsterdam",
+              "options": [
+                {
+                  "id": "amsterdam",
+                  "label": "Amsterdam"
+                },
+                {
+                  "id": "drenthe",
+                  "label": "Drenthe"
+                },
+                {
+                  "id": "flevoland",
+                  "label": "Flevoland"
+                },
+                {
+                  "id": "friesland",
+                  "label": "Friesland"
+                },
+                {
+                  "id": "gelderland",
+                  "label": "Gelderland"
+                },
+                {
+                  "id": "groningen",
+                  "label": "Groningen"
+                },
+                {
+                  "id": "limburg",
+                  "label": "Limburg"
+                },
+                {
+                  "id": "noord_brabant",
+                  "label": "Noord-Brabant"
+                },
+                {
+                  "id": "noord_holland",
+                  "label": "Noord-Holland"
+                },
+                {
+                  "id": "overijssel",
+                  "label": "Overijssel"
+                },
+                {
+                  "id": "utrecht",
+                  "label": "Utrecht"
+                },
+                {
+                  "id": "zeeland",
+                  "label": "Zeeland"
+                },
+                {
+                  "id": "zuid_holland",
+                  "label": "Zuid-Holland"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "stage",
+          "summary": "Project stage",
+          "title": "Do you already have a kitchen design?",
+          "help": "If you already have drawings, we can build from them.",
+          "groups": [
+            {
+              "id": "stage",
+              "type": "choice",
+              "options": [
+                {
+                  "id": "has_design",
+                  "label": "Yes, I have a design and I'm looking for a builder",
+                  "flagFollowUp": true
+                },
+                {
+                  "id": "in_design",
+                  "label": "No, I'm still working on the design"
+                },
+                {
+                  "id": "designer",
+                  "label": "I'm an interior designer or architect working for a client",
+                  "flagFollowUp": true,
+                  "clientType": "designer"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "layout",
+          "summary": "Layout",
+          "title": "What shape is the kitchen?",
+          "help": "Corners and an island change how the kitchen is built, so we ask both.",
+          "groups": [
+            {
+              "id": "shape",
+              "type": "choice",
+              "label": "Shape",
+              "options": [
+                {
+                  "id": "straight",
+                  "label": "Straight"
+                },
+                {
+                  "id": "l",
+                  "label": "L-shaped"
+                },
+                {
+                  "id": "u",
+                  "label": "U-shaped"
+                },
+                {
+                  "id": "custom",
+                  "label": "Custom shape",
+                  "hint": "Any other layout, for example with a peninsula"
+                }
+              ]
+            },
+            {
+              "id": "island",
+              "type": "choice",
+              "label": "Island",
+              "options": [
+                {
+                  "id": "no",
+                  "label": "No island"
+                },
+                {
+                  "id": "yes",
+                  "label": "With an island"
+                }
+              ]
+            },
+            {
+              "id": "meters",
+              "type": "number",
+              "label": "Total length of the cabinets",
+              "help": "Add up every wall with cabinets, including tall cabinets, plus the island if you want one. Example: a 5 m wall and a 3,6 m island make 8,6 m.",
+              "unit": "m",
+              "min": 2,
+              "max": 25,
+              "step": 0.1,
+              "placeholder": "8,6",
+              "decimalHint": "Write decimals with a comma, for example 8,6",
+              "unsureLabel": "I'm not sure yet",
+              "unsureNote": "No problem. The starting budget is calculated from the length of the cabinetry, so without it we cannot give you a figure. You will still see your kitchen style, and you can send us your choices so we can work out the length and the budget together.",
+              "unsureSummary": "Not sure yet"
+            }
+          ]
+        },
+        {
+          "id": "fronts",
+          "summary": "Fronts",
+          "title": "What shape and material should the fronts be?",
+          "info": "The cabinet boxes behind the fronts are always plywood, because it stays straight for years. You don't need to choose them.",
+          "groups": [
+            {
+              "id": "front_shape",
+              "type": "choice",
+              "label": "Shape",
+              "options": [
+                {
+                  "id": "flat",
+                  "label": "Flat",
+                  "hint": "Smooth, flat doors, usually without visible handles"
+                },
+                {
+                  "id": "framed",
+                  "label": "Framed",
+                  "hint": "Panelled fronts with profiled edges. Any type of profile or frame is possible."
+                }
+              ]
+            },
+            {
+              "id": "front_material",
+              "type": "choice",
+              "label": "Material",
+              "options": [
+                {
+                  "id": "painted",
+                  "label": "Painted",
+                  "hint": "Any NCS colour, in matte, silk or high gloss",
+                  "shapes": [
+                    "flat",
+                    "framed"
+                  ]
+                },
+                {
+                  "id": "veneer",
+                  "label": "Wood veneer",
+                  "hint": "Real wood, for example oak, with the grain visible",
+                  "shapes": [
+                    "flat",
+                    "framed"
+                  ]
+                },
+                {
+                  "id": "steel",
+                  "label": "Metal",
+                  "hint": "For example brushed stainless steel. Hard-wearing, industrial look",
+                  "shapes": [
+                    "flat"
+                  ]
+                },
+                {
+                  "id": "specialty",
+                  "label": "Specialty material",
+                  "hint": "Another material you have in mind. Priced once it is chosen",
+                  "shapes": [
+                    "flat"
+                  ]
+                }
+              ]
+            }
+          ],
+          "frontImages": {
+            "flat_painted": "images/fronts/flat-painted.jpg",
+            "flat_veneer": "images/fronts/flat-veneer.jpg",
+            "flat_steel": "images/fronts/flat-steel.jpg",
+            "framed_painted": "images/fronts/framed-painted.jpg",
+            "framed_veneer": "images/fronts/framed-veneer.jpg"
+          }
+        },
+        {
+          "id": "worktop",
+          "summary": "Worktop",
+          "title": "What should the worktop be made of?",
+          "groups": [
+            {
+              "id": "worktop",
+              "type": "choice",
+              "options": [
+                {
+                  "id": "quartz",
+                  "label": "Composite",
+                  "hint": "Even colour, low maintenance. Not heat-proof: hot pans need a trivet.",
+                  "image": "images/worktop/quartz.jpg"
+                },
+                {
+                  "id": "ceramic",
+                  "label": "Ceramic or sintered stone",
+                  "hint": "Resists heat and scratches: hot pans can go straight on it. For example Dekton. Usually costs more than composite.",
+                  "image": "images/worktop/ceramic.jpg"
+                },
+                {
+                  "id": "natural_stone",
+                  "label": "Natural stone",
+                  "hint": "Marble, quartzite or granite. Every slab is unique.",
+                  "image": "images/worktop/natural_stone.jpg"
+                },
+                {
+                  "id": "specialty",
+                  "label": "Specialty material",
+                  "hint": "Concrete, stainless steel or other",
+                  "image": "images/worktop/specialty.jpg"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "appliances",
+          "summary": "Appliances",
+          "title": "Which appliances do you have in mind?",
+          "groups": [
+            {
+              "id": "appliance_path",
+              "type": "choice",
+              "options": [
+                {
+                  "id": "built_in",
+                  "label": "Built-in",
+                  "hint": "Oven and hob built into the cabinets"
+                },
+                {
+                  "id": "freestanding",
+                  "label": "Freestanding range cooker",
+                  "hint": "One large cooker with ovens and hob, the centrepiece of the kitchen"
+                },
+                {
+                  "id": "own",
+                  "label": "I already have my own appliances",
+                  "hint": "We build the kitchen around what you have"
+                }
+              ]
+            },
+            {
+              "id": "appliance_tier",
+              "type": "choice",
+              "label": "Price range",
+              "visibleWhen": {
+                "group": "appliance_path",
+                "notIn": [
+                  "own"
+                ]
+              },
+              "options": [
+                {
+                  "id": "upper_midrange",
+                  "label": "Upper midrange"
+                },
+                {
+                  "id": "premium",
+                  "label": "Premium"
+                },
+                {
+                  "id": "top_tier",
+                  "label": "Top tier"
+                }
+              ]
+            }
+          ],
+          "applianceHints": {
+            "built_in": {
+              "upper_midrange": "e.g. Bosch and Siemens",
+              "premium": "e.g. Bora, Miele and Liebherr",
+              "top_tier": "e.g. Gaggenau"
+            },
+            "freestanding": {
+              "upper_midrange": "e.g. Boretti and Smeg",
+              "premium": "e.g. Falcon and Ilve",
+              "top_tier": "e.g. Lacanche, AGA and La Cornue"
+            }
+          }
+        },
+        {
+          "id": "hardware",
+          "summary": "Drawers",
+          "title": "What should the drawers be made of?",
+          "groups": [
+            {
+              "id": "hardware",
+              "type": "choice",
+              "options": [
+                {
+                  "id": "steel",
+                  "label": "Simple steel drawers",
+                  "image": "images/drawers/steel.jpg",
+                  "hint": "Slim steel drawer sides. Hard-wearing, the common choice"
+                },
+                {
+                  "id": "wood",
+                  "label": "All-wood interior drawers",
+                  "image": "images/drawers/wood.jpg",
+                  "hint": "Drawer boxes made entirely of wood. Warmer to look at, costs more"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "sink_tap",
+          "summary": "Sink and tap",
+          "title": "Which sink and tap?",
+          "groups": [
+            {
+              "id": "sink",
+              "type": "choice",
+              "label": "Sink material",
+              "options": [
+                {
+                  "id": "stainless",
+                  "label": "Stainless steel",
+                  "image": "images/sink/stainless.jpg",
+                  "hint": "Hard-wearing and easy to clean"
+                },
+                {
+                  "id": "composite",
+                  "label": "Composite",
+                  "image": "images/sink/composite.jpg",
+                  "hint": "Matte, available in several colours"
+                },
+                {
+                  "id": "stone",
+                  "label": "Natural stone",
+                  "hint": "Carved from stone, pairs with a natural-stone worktop",
+                  "image": "images/sink/stone.jpg"
+                }
+              ]
+            },
+            {
+              "id": "tap",
+              "type": "choice",
+              "label": "Tap",
+              "options": [
+                {
+                  "id": "standard",
+                  "label": "Standard tap"
+                },
+                {
+                  "id": "boiling",
+                  "label": "Boiling-water tap",
+                  "hint": "Boiling water straight from the tap"
+                },
+                {
+                  "id": "filtered",
+                  "label": "Filtered-water tap",
+                  "hint": "Filtered drinking water from the same tap"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "styles": {
+        "modern": {
+          "name": "Modern",
+          "subtitle": "clean, sharp, close to futuristic",
+          "description": "Handleless fronts with a recessed grip, painted in any NCS colour in matte, silk or high gloss. Without handles the kitchen steps back and reads as part of the living space, not as furniture standing in it.",
+          "image": "images/modern.jpg"
+        },
+        "scandi_japandi": {
+          "name": "Scandinavian",
+          "subtitle": "natural, airy, warm without clutter",
+          "description": "Flat fronts in oak veneer with the grain left visible, against pale walls and a few open shelves. The wood carries the room. Japandi is the same build in a darker, matte finish.",
+          "image": "images/scandinavian.jpg"
+        },
+        "country": {
+          "name": "Country",
+          "subtitle": "relaxed, lived in, built around the cooker",
+          "description": "Framed fronts in oak or paint around a freestanding range cooker, 90 to 110 cm wide. The cooker becomes the place people gather, so the kitchen is planned around standing and talking, not only cooking.",
+          "image": "images/country.jpg"
+        },
+        "classic": {
+          "name": "Classic",
+          "subtitle": "framed, detailed, quiet",
+          "description": "Painted frames with a profiled edge, and appliances built in behind matching fronts. The detail is in the joinery, so the kitchen sits calmly in a period house or a room with high ceilings.",
+          "image": "images/classic.jpg"
+        },
+        "industrial": {
+          "name": "Industrial",
+          "subtitle": "steel, honest, ages in the open",
+          "description": "Brushed metal fronts, often combined with wood. The steel keeps every scratch, and over the years those scratches turn into a patina instead of looking like damage.",
+          "image": "images/industrial.jpg"
+        }
+      },
+      "result": {
+        "title": "Your kitchen direction",
+        "answersTitle": "Your choices",
+        "imageCaption": "Illustrative example, not an actual Aurum kitchen",
+        "imageAlt": "kitchen example",
+        "scrollCue": "Scroll down for your starting budget",
+        "scrollCueUnsure": "Scroll down to send your choices",
+        "scrollCueUnlocked": "Scroll down to your starting budget"
+      },
+      "gate": {
+        "title": "Your starting budget",
+        "prompt": "Want to know the starting budget for your design?",
+        "button": "Show my starting budget",
+        "fields": {
+          "name": "Name",
+          "email": "Email",
+          "phoneCountry": "Country code",
+          "phone": "Phone number"
+        },
+        "required": [
+          "name",
+          "email"
+        ],
+        "phoneCodes": [
+          {
+            "id": "+31",
+            "label": "+31 NL",
+            "minDigits": 9,
+            "maxDigits": 9,
+            "example": "6 12345678",
+            "trunk": "0"
+          },
+          {
+            "id": "+32",
+            "label": "+32 BE",
+            "minDigits": 8,
+            "maxDigits": 9,
+            "example": "470 12 34 56",
+            "trunk": "0"
+          },
+          {
+            "id": "+49",
+            "label": "+49 DE",
+            "minDigits": 10,
+            "maxDigits": 11,
+            "example": "1512 3456789",
+            "trunk": "0"
+          },
+          {
+            "id": "other",
+            "label": "Other",
+            "minDigits": 6,
+            "maxDigits": 15,
+            "example": ""
+          }
+        ],
+        "errors": {
+          "name": "Enter your name.",
+          "email": "Enter a valid email address.",
+          "phone": "Enter a valid phone number for the selected country code, or leave it blank."
+        },
+        "promptUnsure": "Want to work out the length and the budget with us?",
+        "buttonUnsure": "Send my choices to Aurum",
+        "marketing": "Keep me posted about Aurum projects and news. Optional, you can unsubscribe at any time.",
+        "privacy": {
+          "short": "We use your details only to respond to your kitchen request.",
+          "linkLabel": "How we handle your data",
+          "details": [
+            "Aurum Premium Interiors, Oudelandsdijkje 4, 1141 PH Monnickendam, is responsible for your data. Questions: {email}.",
+            "We collect your name, email address, your phone number if you give it, and the answers in this configurator.",
+            "We use them to answer your kitchen request and prepare a starting budget or quote. This is a step you asked for before a possible agreement (AVG article 6(1)(b)), so no separate permission is needed. If you tick the news box, we also use your email address for that, based on your permission, which you can withdraw at any time.",
+            "To improve the configurator we count anonymously how far visitors get. That count holds no name, email or other personal details.",
+            "Only Aurum sees your details. They are stored in Google Sheets, which Google processes on our behalf. We do not sell or share them.",
+            "We keep your details for up to 24 months after our last contact, unless a project follows.",
+            "You can ask to see, correct or delete your details, object to their use, or receive a copy, by emailing {email}. You can also file a complaint with the Autoriteit Persoonsgegevens."
+          ]
+        },
+        "timing": {
+          "label": "When do you want your new kitchen?",
+          "placeholder": "Choose (optional)",
+          "options": [
+            {
+              "id": "within_3",
+              "label": "Within 3 months"
+            },
+            {
+              "id": "3_6",
+              "label": "In 3 to 6 months"
+            },
+            {
+              "id": "6_12",
+              "label": "In 6 to 12 months"
+            },
+            {
+              "id": "exploring",
+              "label": "Just exploring"
+            }
+          ]
+        }
+      },
+      "budget": {
+        "title": "Your starting budget",
+        "prefix": "from",
+        "caption": "A starting figure for a {style} kitchen with {meters} m of cabinets. It is not a quote.",
+        "includedTitle": "Included in every Aurum kitchen",
+        "included": [
+          "Plywood cabinet boxes",
+          "Kitchen design",
+          "Fitting the cabinets",
+          "Measuring and installing the worktop"
+        ],
+        "notes": [
+          "The figure includes the worktop, sink and tap you chose, and the appliances unless you have your own.",
+          "The final quote depends on site conditions: plumbing, electrical, gas, ventilation, removal of the old kitchen and access to the room.",
+          "A 3D visualisation is an optional extra."
+        ],
+        "ctaTitle": "Discuss your kitchen with us",
+        "whatsappLabel": "Message us on WhatsApp",
+        "whatsappText": "Hello Aurum, this is {name}. I used the kitchen configurator ({style}, {budgetPart}) and would like to talk about my project.",
+        "whatsappTextPriority": "Hello Aurum, this is {name}. I used the kitchen configurator ({style}, {budgetPart}). I already have a design and I'm looking for a builder.",
+        "emailLabel": "Send an email",
+        "emailSubject": "Kitchen project",
+        "unsureTitle": "Your choices are with us",
+        "unsureText": "We need the length of your kitchen to calculate a starting budget. We will contact you to work it out together. You can also measure the wall yourself and run the configurator again for an instant figure.",
+        "budgetUnknown": "length still to be measured",
+        "ctaText": "Send us a message to talk through your choices or to plan a call with Aurum.",
+        "whatsappTextDesigner": "Hello Aurum, this is {name}. I'm an interior designer and used the kitchen configurator for a client ({style}, {budgetPart}). I'd like to discuss the project."
+      },
+      "email": {
+        "subject": "Your kitchen direction: {style}",
+        "preheader": "Your choices and starting budget from the Aurum kitchen configurator.",
+        "kicker": "Kitchen configurator",
+        "greeting": "Hello {name},",
+        "intro": "Thank you for using our kitchen configurator. Here are your choices and your starting budget, so you have them in one place.",
+        "styleLabel": "Your kitchen direction",
+        "budgetLabel": "Starting budget",
+        "budgetNote": "A starting figure, not a quote. The final price depends on the details we work out together and on the situation on site.",
+        "budgetUnknown": "We need the length of your kitchen to calculate a starting budget. We will work it out with you.",
+        "choicesLabel": "Your choices",
+        "nextLabel": "What happens next",
+        "next": "We read every request ourselves and will contact you to discuss your kitchen. Every Aurum kitchen is designed and built in our own workshop in Monnickendam.",
+        "questions": "Questions in the meantime? Reply to this email or send us a WhatsApp message on {phone}.",
+        "signoff": "Kind regards,",
+        "signature": "Anna Simakova",
+        "signatureRole": "Aurum Premium Interiors",
+        "footer": "You receive this email because you asked for your starting budget in the Aurum kitchen configurator."
+      }
+    },
+    "nl": {
+      "home": {
+        "headline": "Acht vragen. Jouw keukenrichting.",
+        "howItWorks": "Beantwoord acht vragen, ongeveer twee minuten, om jouw keukenstijl en startbudget te bepalen.",
+        "button": "Start",
+        "trust": "Ontworpen en gebouwd door Aurum Premium Interiors in onze eigen werkplaats in Monnickendam."
+      },
+      "ui": {
+        "back": "Terug",
+        "continue": "Doorgaan",
+        "restart": "Opnieuw beginnen",
+        "errorTitle": "De keukenplanner kon niet laden",
+        "errorText": "Controleer je verbinding en probeer het opnieuw.",
+        "errorRetry": "Probeer opnieuw",
+        "prototypeNote": "Prototype-cijfer, geen echte prijs.",
+        "lengthRangeError": "Voer een lengte in tussen {min} en {max} {unit}, bijvoorbeeld 8,6.",
+        "stepOf": "{n} van {total}",
+        "missing": "Om door te gaan, beantwoord nog:"
+      },
+      "questions": [
+        {
+          "id": "location",
+          "summary": "Locatie",
+          "title": "Waar in Nederland komt de keuken?",
+          "help": "We werken vooral in Amsterdam en Noord-Holland. Kies Amsterdam of je provincie.",
+          "groups": [
+            {
+              "id": "location",
+              "type": "select",
+              "label": "Regio",
+              "default": "amsterdam",
+              "options": [
+                {
+                  "id": "amsterdam",
+                  "label": "Amsterdam"
+                },
+                {
+                  "id": "drenthe",
+                  "label": "Drenthe"
+                },
+                {
+                  "id": "flevoland",
+                  "label": "Flevoland"
+                },
+                {
+                  "id": "friesland",
+                  "label": "Friesland"
+                },
+                {
+                  "id": "gelderland",
+                  "label": "Gelderland"
+                },
+                {
+                  "id": "groningen",
+                  "label": "Groningen"
+                },
+                {
+                  "id": "limburg",
+                  "label": "Limburg"
+                },
+                {
+                  "id": "noord_brabant",
+                  "label": "Noord-Brabant"
+                },
+                {
+                  "id": "noord_holland",
+                  "label": "Noord-Holland"
+                },
+                {
+                  "id": "overijssel",
+                  "label": "Overijssel"
+                },
+                {
+                  "id": "utrecht",
+                  "label": "Utrecht"
+                },
+                {
+                  "id": "zeeland",
+                  "label": "Zeeland"
+                },
+                {
+                  "id": "zuid_holland",
+                  "label": "Zuid-Holland"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "stage",
+          "summary": "Projectfase",
+          "title": "Heb je al een keukenontwerp?",
+          "help": "Heb je al tekeningen, dan kunnen we daarvan uitgaan.",
+          "groups": [
+            {
+              "id": "stage",
+              "type": "choice",
+              "options": [
+                {
+                  "id": "has_design",
+                  "label": "Ja, ik heb een ontwerp en zoek een bouwer",
+                  "flagFollowUp": true
+                },
+                {
+                  "id": "in_design",
+                  "label": "Nee, ik ben nog met het ontwerp bezig"
+                },
+                {
+                  "id": "designer",
+                  "label": "Ik ben interieurontwerper of architect en werk voor een klant",
+                  "flagFollowUp": true,
+                  "clientType": "designer"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "layout",
+          "summary": "Indeling",
+          "title": "Welke vorm heeft de keuken?",
+          "help": "Hoeken en een kookeiland veranderen hoe de keuken gebouwd wordt, dus we vragen beide.",
+          "groups": [
+            {
+              "id": "shape",
+              "type": "choice",
+              "label": "Vorm",
+              "options": [
+                {
+                  "id": "straight",
+                  "label": "Recht"
+                },
+                {
+                  "id": "l",
+                  "label": "L-vormig"
+                },
+                {
+                  "id": "u",
+                  "label": "U-vormig"
+                },
+                {
+                  "id": "custom",
+                  "label": "Afwijkende vorm",
+                  "hint": "Elke andere indeling, bijvoorbeeld met een schiereiland"
+                }
+              ]
+            },
+            {
+              "id": "island",
+              "type": "choice",
+              "label": "Kookeiland",
+              "options": [
+                {
+                  "id": "no",
+                  "label": "Geen kookeiland"
+                },
+                {
+                  "id": "yes",
+                  "label": "Met kookeiland"
+                }
+              ]
+            },
+            {
+              "id": "meters",
+              "type": "number",
+              "label": "Totale lengte van de kasten",
+              "help": "Tel alle wanden met kasten bij elkaar op, ook hoge kasten, plus het kookeiland als je dat wilt. Voorbeeld: een wand van 5 m en een kookeiland van 3,6 m is samen 8,6 m.",
+              "unit": "m",
+              "min": 2,
+              "max": 25,
+              "step": 0.1,
+              "placeholder": "8,6",
+              "decimalHint": "Gebruik een komma voor decimalen, bijvoorbeeld 8,6",
+              "unsureLabel": "Ik weet het nog niet",
+              "unsureNote": "Geen probleem. Het startbudget wordt berekend op basis van de lengte van de kasten, dus zonder lengte kunnen we geen bedrag geven. Je ziet wel jouw keukenstijl, en je kunt jouw keuzes naar ons sturen zodat we de lengte en het budget samen bepalen.",
+              "unsureSummary": "Nog niet bekend"
+            }
+          ]
+        },
+        {
+          "id": "fronts",
+          "summary": "Fronten",
+          "title": "Welke vorm en materiaal moeten de fronten hebben?",
+          "info": "De kasten achter de fronten zijn altijd van multiplex, omdat dat jarenlang recht blijft. Daar hoef je niets voor te kiezen.",
+          "groups": [
+            {
+              "id": "front_shape",
+              "type": "choice",
+              "label": "Vorm",
+              "options": [
+                {
+                  "id": "flat",
+                  "label": "Vlak",
+                  "hint": "Gladde, vlakke deuren, meestal zonder zichtbare handgrepen"
+                },
+                {
+                  "id": "framed",
+                  "label": "Met kader",
+                  "hint": "Fronten met een kader en geprofileerde randen. Elk type profiel of kader is mogelijk."
+                }
+              ]
+            },
+            {
+              "id": "front_material",
+              "type": "choice",
+              "label": "Materiaal",
+              "options": [
+                {
+                  "id": "painted",
+                  "label": "Geschilderd",
+                  "hint": "Elke NCS-kleur, in mat, zijdeglans of hoogglans",
+                  "shapes": [
+                    "flat",
+                    "framed"
+                  ]
+                },
+                {
+                  "id": "veneer",
+                  "label": "Houtfineer",
+                  "hint": "Echt hout, bijvoorbeeld eiken, met zichtbare nerf",
+                  "shapes": [
+                    "flat",
+                    "framed"
+                  ]
+                },
+                {
+                  "id": "steel",
+                  "label": "Metaal",
+                  "hint": "Bijvoorbeeld geborsteld roestvrij staal. Slijtvast, industriële uitstraling",
+                  "shapes": [
+                    "flat"
+                  ]
+                },
+                {
+                  "id": "specialty",
+                  "label": "Speciaal materiaal",
+                  "hint": "Een ander materiaal dat je voor ogen hebt. Geprijsd zodra het gekozen is",
+                  "shapes": [
+                    "flat"
+                  ]
+                }
+              ]
+            }
+          ],
+          "frontImages": {
+            "flat_painted": "images/fronts/flat-painted.jpg",
+            "flat_veneer": "images/fronts/flat-veneer.jpg",
+            "flat_steel": "images/fronts/flat-steel.jpg",
+            "framed_painted": "images/fronts/framed-painted.jpg",
+            "framed_veneer": "images/fronts/framed-veneer.jpg"
+          }
+        },
+        {
+          "id": "worktop",
+          "summary": "Werkblad",
+          "title": "Waarvan moet het werkblad gemaakt zijn?",
+          "groups": [
+            {
+              "id": "worktop",
+              "type": "choice",
+              "options": [
+                {
+                  "id": "quartz",
+                  "label": "Composiet",
+                  "hint": "Egale kleur, weinig onderhoud. Niet hittebestendig: hete pannen op een onderzetter.",
+                  "image": "images/worktop/quartz.jpg"
+                },
+                {
+                  "id": "ceramic",
+                  "label": "Keramiek of sintersteen",
+                  "hint": "Bestand tegen hitte en krassen: hete pannen kunnen er direct op. Bijvoorbeeld Dekton. Meestal duurder dan composiet.",
+                  "image": "images/worktop/ceramic.jpg"
+                },
+                {
+                  "id": "natural_stone",
+                  "label": "Natuursteen",
+                  "hint": "Marmer, kwartsiet of graniet. Elke plaat is uniek.",
+                  "image": "images/worktop/natural_stone.jpg"
+                },
+                {
+                  "id": "specialty",
+                  "label": "Speciaal materiaal",
+                  "hint": "Beton, roestvrij staal of anders",
+                  "image": "images/worktop/specialty.jpg"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "appliances",
+          "summary": "Apparatuur",
+          "title": "Welke apparatuur heb je in gedachten?",
+          "groups": [
+            {
+              "id": "appliance_path",
+              "type": "choice",
+              "options": [
+                {
+                  "id": "built_in",
+                  "label": "Inbouw",
+                  "hint": "Oven en kookplaat ingebouwd in de kasten"
+                },
+                {
+                  "id": "freestanding",
+                  "label": "Vrijstaand fornuis",
+                  "hint": "Eén groot fornuis met ovens en kookplaat, het middelpunt van de keuken"
+                },
+                {
+                  "id": "own",
+                  "label": "Ik heb al eigen apparatuur",
+                  "hint": "We bouwen de keuken rondom wat je al hebt"
+                }
+              ]
+            },
+            {
+              "id": "appliance_tier",
+              "type": "choice",
+              "label": "Prijsklasse",
+              "visibleWhen": {
+                "group": "appliance_path",
+                "notIn": [
+                  "own"
+                ]
+              },
+              "options": [
+                {
+                  "id": "upper_midrange",
+                  "label": "Hogere middenklasse"
+                },
+                {
+                  "id": "premium",
+                  "label": "Premium"
+                },
+                {
+                  "id": "top_tier",
+                  "label": "Topsegment"
+                }
+              ]
+            }
+          ],
+          "applianceHints": {
+            "built_in": {
+              "upper_midrange": "bv. Bosch en Siemens",
+              "premium": "bv. Bora, Miele en Liebherr",
+              "top_tier": "bv. Gaggenau"
+            },
+            "freestanding": {
+              "upper_midrange": "bv. Boretti en Smeg",
+              "premium": "bv. Falcon en Ilve",
+              "top_tier": "bv. Lacanche, AGA en La Cornue"
+            }
+          }
+        },
+        {
+          "id": "hardware",
+          "summary": "Lades",
+          "title": "Waarvan moeten de lades gemaakt zijn?",
+          "groups": [
+            {
+              "id": "hardware",
+              "type": "choice",
+              "options": [
+                {
+                  "id": "steel",
+                  "label": "Eenvoudige stalen lades",
+                  "image": "images/drawers/steel.jpg",
+                  "hint": "Slanke stalen ladezijkanten. Slijtvast, de gangbare keuze"
+                },
+                {
+                  "id": "wood",
+                  "label": "Volledig houten ladeinterieur",
+                  "image": "images/drawers/wood.jpg",
+                  "hint": "Lades volledig van hout. Warmer om te zien, kost meer"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "sink_tap",
+          "summary": "Spoelbak en kraan",
+          "title": "Welke spoelbak en kraan?",
+          "groups": [
+            {
+              "id": "sink",
+              "type": "choice",
+              "label": "Materiaal spoelbak",
+              "options": [
+                {
+                  "id": "stainless",
+                  "label": "Roestvrij staal",
+                  "image": "images/sink/stainless.jpg",
+                  "hint": "Slijtvast en makkelijk schoon te houden"
+                },
+                {
+                  "id": "composite",
+                  "label": "Composiet",
+                  "image": "images/sink/composite.jpg",
+                  "hint": "Mat, verkrijgbaar in meerdere kleuren"
+                },
+                {
+                  "id": "stone",
+                  "label": "Natuursteen",
+                  "hint": "Uit steen gehouwen, past bij een natuurstenen werkblad",
+                  "image": "images/sink/stone.jpg"
+                }
+              ]
+            },
+            {
+              "id": "tap",
+              "type": "choice",
+              "label": "Kraan",
+              "options": [
+                {
+                  "id": "standard",
+                  "label": "Standaardkraan"
+                },
+                {
+                  "id": "boiling",
+                  "label": "Kokendwaterkraan",
+                  "hint": "Kokend water direct uit de kraan"
+                },
+                {
+                  "id": "filtered",
+                  "label": "Kraan met waterfilter",
+                  "hint": "Gefilterd drinkwater uit dezelfde kraan"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "styles": {
+        "modern": {
+          "name": "Modern",
+          "subtitle": "strak, scherp, bijna futuristisch",
+          "description": "Greeploze fronten met een uitgefreesde greep, geschilderd in elke NCS-kleur in mat, zijdeglans of hoogglans. Zonder handgrepen treedt de keuken terug en wordt ze deel van de woonruimte, geen meubel dat erin staat.",
+          "image": "images/modern.jpg"
+        },
+        "scandi_japandi": {
+          "name": "Scandinavisch",
+          "subtitle": "natuurlijk, luchtig, warm zonder rommel",
+          "description": "Vlakke fronten in eikenfineer met zichtbare nerf, tegen lichte wanden en een paar open planken. Het hout draagt de ruimte. Japandi is dezelfde opbouw in een donkerdere, matte uitvoering.",
+          "image": "images/scandinavian.jpg"
+        },
+        "country": {
+          "name": "Landelijk",
+          "subtitle": "ontspannen, geleefd, gebouwd rond het fornuis",
+          "description": "Fronten met kader in eiken of verf, rond een vrijstaand fornuis van 90 tot 110 cm breed. Het fornuis wordt de plek waar iedereen samenkomt, dus de keuken is ingericht om te staan en te praten, niet alleen om te koken.",
+          "image": "images/country.jpg"
+        },
+        "classic": {
+          "name": "Klassiek",
+          "subtitle": "met kader, gedetailleerd, rustig",
+          "description": "Geschilderde kaders met een geprofileerde rand, en inbouwapparatuur achter bijpassende fronten. Het detail zit in het schrijnwerk, zodat de keuken rustig staat in een oud pand of een ruimte met hoge plafonds.",
+          "image": "images/classic.jpg"
+        },
+        "industrial": {
+          "name": "Industrieel",
+          "subtitle": "staal, eerlijk, veroudert in het zicht",
+          "description": "Geborstelde metalen fronten, vaak gecombineerd met hout. Het staal houdt elke kras vast, en na een paar jaar worden die krassen een patina in plaats van schade.",
+          "image": "images/industrial.jpg"
+        }
+      },
+      "result": {
+        "title": "Jouw keukenrichting",
+        "answersTitle": "Jouw keuzes",
+        "imageCaption": "Ter illustratie, geen daadwerkelijke Aurum-keuken",
+        "imageAlt": "keukenvoorbeeld",
+        "scrollCue": "Scroll naar beneden voor je startbudget",
+        "scrollCueUnsure": "Scroll naar beneden om je keuzes te sturen",
+        "scrollCueUnlocked": "Scroll naar beneden naar je startbudget"
+      },
+      "gate": {
+        "title": "Jouw startbudget",
+        "prompt": "Wil je het startbudget voor jouw ontwerp weten?",
+        "button": "Toon mijn startbudget",
+        "fields": {
+          "name": "Naam",
+          "email": "E-mail",
+          "phoneCountry": "Landcode",
+          "phone": "Telefoonnummer"
+        },
+        "required": [
+          "name",
+          "email"
+        ],
+        "phoneCodes": [
+          {
+            "id": "+31",
+            "label": "+31 NL",
+            "minDigits": 9,
+            "maxDigits": 9,
+            "example": "6 12345678",
+            "trunk": "0"
+          },
+          {
+            "id": "+32",
+            "label": "+32 BE",
+            "minDigits": 8,
+            "maxDigits": 9,
+            "example": "470 12 34 56",
+            "trunk": "0"
+          },
+          {
+            "id": "+49",
+            "label": "+49 DE",
+            "minDigits": 10,
+            "maxDigits": 11,
+            "example": "1512 3456789",
+            "trunk": "0"
+          },
+          {
+            "id": "other",
+            "label": "Ander",
+            "minDigits": 6,
+            "maxDigits": 15,
+            "example": ""
+          }
+        ],
+        "errors": {
+          "name": "Vul je naam in.",
+          "email": "Vul een geldig e-mailadres in.",
+          "phone": "Vul een geldig telefoonnummer in voor de gekozen landcode, of laat dit veld leeg."
+        },
+        "promptUnsure": "Wil je de lengte en het budget samen met ons bepalen?",
+        "buttonUnsure": "Stuur mijn keuzes naar Aurum",
+        "marketing": "Houd me op de hoogte van projecten en nieuws van Aurum. Optioneel, je kunt je altijd afmelden.",
+        "privacy": {
+          "short": "We gebruiken je gegevens alleen om je keukenaanvraag te beantwoorden.",
+          "linkLabel": "Zo gaan we met je gegevens om",
+          "details": [
+            "Aurum Premium Interiors, Oudelandsdijkje 4, 1141 PH Monnickendam, is verantwoordelijk voor je gegevens. Vragen: {email}.",
+            "We verzamelen je naam, e-mailadres, je telefoonnummer als je dat invult, en de antwoorden in deze keukenplanner.",
+            "We gebruiken ze om je keukenaanvraag te beantwoorden en een startbudget of offerte voor te bereiden. Dat is een stap waar je zelf om vraagt vóór een mogelijke overeenkomst (AVG artikel 6 lid 1 sub b), dus aparte toestemming is niet nodig. Vink je het nieuwsvakje aan, dan gebruiken we je e-mailadres ook daarvoor, op basis van je toestemming. Die kun je altijd intrekken.",
+            "Om de keukenplanner te verbeteren tellen we anoniem hoe ver bezoekers komen. Daarbij slaan we geen naam, e-mail of andere persoonsgegevens op.",
+            "Alleen Aurum ziet je gegevens. Ze worden opgeslagen in Google Sheets, dat Google namens ons verwerkt. We verkopen of delen ze niet.",
+            "We bewaren je gegevens tot 24 maanden na ons laatste contact, tenzij er een project uit voortkomt.",
+            "Je kunt je gegevens inzien, laten corrigeren of verwijderen, bezwaar maken tegen het gebruik, of een kopie opvragen via {email}. Je kunt ook een klacht indienen bij de Autoriteit Persoonsgegevens."
+          ]
+        },
+        "timing": {
+          "label": "Wanneer wil je je nieuwe keuken?",
+          "placeholder": "Kies (optioneel)",
+          "options": [
+            {
+              "id": "within_3",
+              "label": "Binnen 3 maanden"
+            },
+            {
+              "id": "3_6",
+              "label": "Over 3 tot 6 maanden"
+            },
+            {
+              "id": "6_12",
+              "label": "Over 6 tot 12 maanden"
+            },
+            {
+              "id": "exploring",
+              "label": "Ik oriënteer me nog"
+            }
+          ]
+        }
+      },
+      "budget": {
+        "title": "Jouw startbudget",
+        "prefix": "vanaf",
+        "caption": "Een startcijfer voor een keuken in de stijl {style} met {meters} m kasten. Dit is geen offerte.",
+        "includedTitle": "Inbegrepen bij elke Aurum-keuken",
+        "included": [
+          "Kasten van multiplex",
+          "Keukenontwerp",
+          "Montage van de kasten",
+          "Opmeten en plaatsen van het werkblad"
+        ],
+        "notes": [
+          "Het bedrag is inclusief het werkblad, de spoelbak en de kraan die je koos, en de apparatuur tenzij je die zelf hebt.",
+          "De uiteindelijke offerte is afhankelijk van de situatie ter plaatse: leidingwerk, elektra, gas, ventilatie, verwijderen van de oude keuken en toegankelijkheid van de ruimte.",
+          "Een 3D-visualisatie is een optionele toevoeging."
+        ],
+        "ctaTitle": "Bespreek je keuken met ons",
+        "whatsappLabel": "Stuur ons een bericht via WhatsApp",
+        "whatsappText": "Hallo Aurum, met {name}. Ik heb de keukenplanner ingevuld ({style}, {budgetPart}) en wil graag over mijn project praten.",
+        "whatsappTextPriority": "Hallo Aurum, met {name}. Ik heb de keukenplanner ingevuld ({style}, {budgetPart}). Ik heb al een ontwerp en zoek een bouwer.",
+        "emailLabel": "Stuur een e-mail",
+        "emailSubject": "Keukenproject",
+        "unsureTitle": "Jouw keuzes zijn bij ons",
+        "unsureText": "We hebben de lengte van je keuken nodig om een startbudget te berekenen. We nemen contact met je op om die samen te bepalen. Je kunt de wand ook zelf opmeten en de keukenplanner opnieuw invullen voor direct een bedrag.",
+        "budgetUnknown": "lengte nog op te meten",
+        "ctaText": "Stuur ons een bericht om je keuzes door te nemen of een belafspraak met Aurum te plannen.",
+        "whatsappTextDesigner": "Hallo Aurum, met {name}. Ik ben interieurontwerper en heb de keukenplanner voor een klant ingevuld ({style}, {budgetPart}). Ik bespreek het project graag."
+      },
+      "email": {
+        "subject": "Jouw keukenrichting: {style}",
+        "preheader": "Je keuzes en startbudget uit de keukenplanner van Aurum.",
+        "kicker": "Keukenplanner",
+        "greeting": "Hallo {name},",
+        "intro": "Bedankt voor het invullen van onze keukenplanner. Hieronder staan je keuzes en je startbudget, zodat je alles bij elkaar hebt.",
+        "styleLabel": "Jouw keukenrichting",
+        "budgetLabel": "Startbudget",
+        "budgetNote": "Een startcijfer, geen offerte. De uiteindelijke prijs hangt af van de details die we samen uitwerken en van de situatie ter plaatse.",
+        "budgetUnknown": "We hebben de lengte van je keuken nodig om een startbudget te berekenen. Die bepalen we samen met je.",
+        "choicesLabel": "Jouw keuzes",
+        "nextLabel": "Hoe nu verder",
+        "next": "We lezen elke aanvraag zelf en nemen contact met je op om je keuken te bespreken. Elke Aurum-keuken wordt ontworpen en gebouwd in onze eigen werkplaats in Monnickendam.",
+        "questions": "Tussendoor vragen? Beantwoord deze e-mail of stuur ons een WhatsApp-bericht via {phone}.",
+        "signoff": "Met vriendelijke groet,",
+        "signature": "Anna Simakova",
+        "signatureRole": "Aurum Premium Interiors",
+        "footer": "Je ontvangt deze e-mail omdat je in de keukenplanner van Aurum je startbudget hebt opgevraagd."
+      }
+    }
+  },
+  "contact": {
+    "whatsapp": "31657181596",
+    "email": "Mathieu@auruminteriors.nl",
+    "leadEndpoint": "https://script.google.com/macros/s/AKfycbyFHUMFN66QAuB7kHL60DMlmZ3HwGC-sPStVA6wpuT1DibkQltE4Hbw5kEDClU3gpaQmg/exec",
+    "privacyUrl": "",
+    "phoneDisplay": "+31 6 57181596"
+  },
+  "pricing": {
+    "placeholder": false,
+    "note": "Prices from Mathieu's pricing worksheet (Pricing Inputs, column D, 12-10-2026), incl. 21% BTW. Specialty worktop (concrete, stainless steel) is still a placeholder.",
+    "currency": "EUR",
+    "minimumFrom": 40000,
+    "roundTo": 1000,
+    "perMeter": {
+      "modern": 3950,
+      "scandi_japandi": 3950,
+      "classic": 4600,
+      "country": 4800,
+      "industrial": 5450
+    },
+    "shape": {
+      "straight": 1.0,
+      "l": 1.05,
+      "u": 1.1,
+      "custom": 1.2
+    },
+    "island": {
+      "no": 1.0,
+      "yes": 1.1
+    },
+    "fronts": {
+      "flat": {
+        "painted": 1.0,
+        "veneer": 1.1,
+        "steel": 1.3,
+        "specialty": 1.35
+      },
+      "framed": {
+        "painted": 1.12,
+        "veneer": 1.22
+      }
+    },
+    "adders": {
+      "worktop": {
+        "quartz": 3250,
+        "ceramic": 5100,
+        "natural_stone": 12800,
+        "specialty": 8000
+      },
+      "appliances": {
+        "built_in": {
+          "upper_midrange": 9250,
+          "premium": 17000,
+          "top_tier": 40750
+        },
+        "freestanding": {
+          "upper_midrange": 7050,
+          "premium": 16300,
+          "top_tier": 39250
+        },
+        "own": 0
+      },
+      "hardware": {
+        "steel": 0,
+        "wood": 2600
+      },
+      "sink": {
+        "stainless": 1300,
+        "composite": 1800,
+        "stone": 3800
+      },
+      "tap": {
+        "standard": 900,
+        "boiling": 2400,
+        "filtered": 2100
+      }
+    }
+  }
+}

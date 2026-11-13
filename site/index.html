@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="theme-color" content="#0F2B43">
+<title>Aurum kitchen qualifier</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:wght@400;500&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+  :root {
+    --navy: #0F2B43;
+    --navy-deep: #0A1F33;
+    --navy-raise: #16344F;
+    --stone: #EBEAE7;
+    --ivory: #F2EDE3;
+    --muted: #93A3B4;
+    --line: rgba(235, 234, 231, 0.16);
+    --line-strong: rgba(235, 234, 231, 0.38);
+    --error: #E7A38F;
+    --serif: "Cormorant", "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+    --sans: "Inter Tight", "Helvetica Neue", "Segoe UI", Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html, body { margin: 0; padding: 0; background: var(--navy); color: var(--ivory); }
+  body {
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+  #app {
+    max-width: 480px;
+    margin: 0 auto;
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    padding: calc(28px + env(safe-area-inset-top, 0px)) 26px calc(32px + env(safe-area-inset-bottom, 0px));
+  }
+  .screen { display: flex; flex-direction: column; flex: 1; }
+  .screen.enter { animation: fade 240ms ease-out; }
+  @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { .screen.enter { animation: none; } }
+
+  h1, h2, h3 { font-family: var(--serif); font-weight: 400; margin: 0; letter-spacing: 0.005em; }
+  h1 { font-size: 46px; line-height: 1.06; }
+  h2 { font-size: 34px; line-height: 1.12; }
+  h3 { font-size: 24px; line-height: 1.2; }
+  p { margin: 0; }
+
+  .logo { display: block; height: auto; }
+  .logo-home { width: 150px; margin: 0 auto; }
+  .home-top .brand { text-align: center; }
+  .logo-result { width: 112px; }
+  .brand { font-family: var(--serif); font-size: 19px; color: var(--stone); letter-spacing: 0.06em; }
+
+  /* Top bar: app name + language switch */
+  .topbar {
+    position: sticky; top: 0; z-index: 5;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px;
+    margin: 0 -26px; padding: 0 26px 14px;
+    background: var(--navy);
+  }
+  .appname { color: var(--muted); font-size: 12.5px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .langswitch { display: flex; gap: 4px; flex: none; }
+  .langbtn {
+    border: 1px solid var(--line-strong); background: transparent; color: var(--muted);
+    font: 500 12px/1 var(--sans); letter-spacing: 0.03em;
+    padding: 6px 10px; border-radius: 999px; cursor: pointer;
+  }
+  .langbtn.active { border-color: var(--stone); background: var(--stone); color: var(--navy-deep); }
+
+  /* Home */
+  .home-top { padding-top: 6px; }
+  .home-main { margin-top: auto; padding-top: 56px; }
+  .home-main h1 { max-width: 9.5em; }
+  .home-lines { margin-top: 44px; border-top: 1px solid var(--line); }
+  .home-lines p { padding: 16px 0; border-bottom: 1px solid var(--line); color: var(--ivory); }
+  .home-lines p.sub { color: var(--muted); }
+  .home-cta { margin-top: 36px; }
+  .trust { margin-top: 28px; color: var(--muted); font-size: 14px; line-height: 1.5; }
+
+  /* Buttons */
+  .btn {
+    display: block; width: 100%;
+    padding: 17px 20px;
+    border: 1px solid var(--stone);
+    background: var(--stone); color: var(--navy-deep);
+    font: 500 16px/1.2 var(--sans);
+    letter-spacing: 0.02em;
+    border-radius: 999px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+  }
+  .btn:hover { background: #ffffff; }
+  .btn.ghost { background: transparent; color: var(--ivory); border-color: var(--line-strong); }
+  .btn.ghost:hover { background: rgba(235, 234, 231, 0.06); }
+  .btn[disabled] { opacity: 0.35; cursor: not-allowed; }
+  .btn + .btn { margin-top: 12px; }
+  .linkbtn {
+    background: none; border: 0; padding: 8px 0; color: var(--muted);
+    font: 400 15px/1.2 var(--sans); cursor: pointer; text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  :focus-visible { outline: 2px solid var(--stone); outline-offset: 3px; }
+
+  /* Question header and progress */
+  .qhead { display: flex; align-items: center; justify-content: space-between; min-height: 32px; }
+  .qhead .count { color: var(--muted); font-size: 14px; }
+  .progress { display: flex; gap: 6px; margin: 14px 0 40px; }
+  .progress i { flex: 1; height: 2px; background: var(--line); }
+  .progress i.on { background: var(--stone); }
+
+  .qbody { flex: 1; }
+  .qbody h2 { margin-bottom: 12px; }
+  .help { color: var(--muted); font-size: 15px; }
+  .info {
+    margin-top: 18px; padding: 14px 16px;
+    border-left: 1px solid var(--stone);
+    background: var(--navy-raise);
+    color: var(--ivory); font-size: 14.5px;
+  }
+  .group { margin-top: 28px; }
+  .group-label { color: var(--muted); font-size: 14px; margin-bottom: 10px; }
+  .options { display: flex; flex-direction: column; gap: 10px; }
+
+  .selectwrap { position: relative; }
+  .selectwrap::after {
+    content: ""; position: absolute; right: 18px; top: 50%; width: 8px; height: 8px;
+    border-right: 1px solid var(--stone); border-bottom: 1px solid var(--stone);
+    transform: translateY(-65%) rotate(45deg); pointer-events: none;
+  }
+  .select {
+    width: 100%; appearance: none; -webkit-appearance: none;
+    padding: 16px 44px 16px 18px;
+    background: transparent; color: var(--ivory);
+    border: 1px solid var(--line-strong); border-radius: 2px;
+    font: 400 16px/1.35 var(--sans);
+    cursor: pointer;
+  }
+  .select:focus { outline: 0; border-color: var(--stone); }
+  .select option { background: var(--navy); color: var(--ivory); }
+  .select option:disabled { color: var(--muted); }
+
+  .opt {
+    display: flex; align-items: center; justify-content: space-between; gap: 14px;
+    width: 100%; text-align: left;
+    padding: 16px 18px;
+    background: transparent; color: var(--ivory);
+    border: 1px solid var(--line-strong);
+    border-radius: 2px;
+    font: 400 16px/1.35 var(--sans);
+    cursor: pointer;
+  }
+  .opt-thumb { flex: none; width: 64px; height: 64px; overflow: hidden; border-radius: 2px; border: 1px solid var(--line-strong); }
+  .opt-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .opt .txt { flex: 1; }
+  .opt .txt small { display: block; margin-top: 3px; color: var(--muted); font-size: 13.5px; }
+  .opt .badge { color: var(--muted); font-size: 13px; white-space: nowrap; }
+  .opt .mark { flex: none; width: 14px; height: 14px; border: 1px solid var(--line-strong); border-radius: 50%; }
+  .opt:hover:not([disabled]) { background: rgba(242, 237, 227, 0.05); }
+  .opt[aria-pressed="true"] { border-color: var(--stone); background: var(--navy-raise); }
+  .opt[aria-pressed="true"] .mark { border-color: var(--stone); background: var(--stone); box-shadow: inset 0 0 0 3px var(--navy-raise); }
+  .opt[disabled] { opacity: 0.5; cursor: not-allowed; }
+
+  .numwrap { display: flex; align-items: baseline; gap: 10px; border-bottom: 1px solid var(--line-strong); padding-bottom: 6px; }
+  .numwrap input {
+    flex: 1; min-width: 0; background: transparent; border: 0; outline: 0;
+    color: var(--ivory); font: 400 40px/1.2 var(--serif);
+    -moz-appearance: textfield;
+  }
+  .numwrap input::-webkit-outer-spin-button, .numwrap input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .numwrap input::placeholder { color: rgba(242, 237, 227, 0.25); }
+  .numwrap:focus-within { border-bottom-color: var(--stone); }
+  .numwrap .unit { color: var(--muted); font-size: 18px; }
+  .numhelp { margin-top: 10px; color: var(--muted); font-size: 14px; }
+  .numerr { margin-top: 8px; color: var(--error); font-size: 14px; min-height: 1em; }
+
+  .qfoot { margin-top: 34px; }
+  .missingnote { margin-bottom: 14px; padding: 12px 16px; border-left: 1px solid var(--error); background: var(--navy-raise); color: var(--ivory); font-size: 14.5px; }
+  .missingnote ul { margin: 6px 0 0; padding-left: 18px; }
+  .group.missing .group-label { color: var(--error); }
+  .numhint { margin-top: 6px; color: var(--muted); font-size: 13.5px; }
+  .unsure { margin-top: 14px; }
+  .unsurenote { margin-top: 12px; padding: 12px 16px; border-left: 1px solid var(--stone); background: var(--navy-raise); color: var(--ivory); font-size: 14px; }
+  .numwrap.off { opacity: 0.4; }
+  .phonerow .trunk { flex: none; display: flex; align-items: center; padding: 0 2px; color: var(--muted); font-size: 16px; }
+
+  /* Result */
+  .result-top { padding-top: 6px; }
+  .kicker { margin-top: 36px; color: var(--muted); font-size: 14px; }
+  .style-name { margin-top: 8px; font-size: 52px; line-height: 1.05; }
+  .style-also { margin-top: 4px; color: var(--muted); font-size: 16px; font-style: italic; font-family: var(--serif); }
+  .style-image { margin-top: 20px; }
+  .style-image img { width: 100%; height: auto; display: block; border-radius: 2px; }
+  .style-image-caption { display: block; margin-top: 8px; color: var(--muted); font-size: 12.5px; font-style: italic; }
+  .style-desc { margin-top: 16px; color: var(--ivory); max-width: 30em; }
+  .style-fit { margin-top: 12px; color: var(--muted); max-width: 30em; font-size: 14.5px; line-height: 1.6; }
+  .block { margin-top: 38px; padding-top: 26px; border-top: 1px solid var(--line); }
+  .block h3 { margin-bottom: 10px; }
+  .block > p { color: var(--muted); font-size: 15px; }
+  .rows { margin-top: 6px; }
+  .row { display: flex; justify-content: space-between; gap: 18px; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 14.5px; }
+  .row span:first-child { color: var(--muted); flex: none; }
+  .row span:last-child { text-align: right; }
+
+  .form { margin-top: 22px; }
+  .field { margin-bottom: 18px; }
+  .field label { display: block; color: var(--muted); font-size: 14px; margin-bottom: 6px; }
+  .field input[type="text"], .field input[type="email"], .field input[type="tel"] {
+    width: 100%; padding: 14px 14px;
+    background: transparent; color: var(--ivory);
+    border: 1px solid var(--line-strong); border-radius: 2px;
+    font: 400 16px/1.3 var(--sans);
+  }
+  .field input:focus { outline: 0; border-color: var(--stone); }
+  .field .err { color: var(--error); font-size: 13.5px; margin-top: 6px; }
+  .phonerow { display: flex; gap: 8px; }
+  .phonerow .phonecode { flex: 0 0 108px; }
+  .phonerow .phonecode .select { padding-right: 32px; padding-left: 14px; font-size: 14.5px; }
+  .phonerow input[type="tel"] {
+    flex: 1; min-width: 0; padding: 14px;
+    background: transparent; color: var(--ivory);
+    border: 1px solid var(--line-strong); border-radius: 2px;
+    font: 400 16px/1.3 var(--sans);
+  }
+  .phonerow input[type="tel"]:focus { outline: 0; border-color: var(--stone); }
+  .block > p.gate-prompt { font-family: var(--serif); font-size: 21px; color: var(--ivory); }
+  .block > p.gate-text { margin-top: 10px; color: var(--muted); font-size: 15px; }
+  .privacy { margin-top: 16px; color: var(--muted); font-size: 13.5px; line-height: 1.5; }
+  .privacy .linkbtn { font-size: 13.5px; padding: 0; color: var(--ivory); }
+  .privacy-details { margin-top: 10px; padding: 12px 16px; border-left: 1px solid var(--line-strong); }
+  .privacy-details p { margin: 0 0 8px; }
+  .privacy-details p:last-child { margin-bottom: 0; }
+
+  /* Scroll cue: fixed on the right, pulses until the budget block is reached */
+  .scrollcue {
+    position: fixed; z-index: 20;
+    right: 14px; bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    display: flex; align-items: center; gap: 10px;
+    padding: 11px 16px 11px 14px;
+    background: var(--stone); color: var(--navy-deep);
+    border: 0; border-radius: 999px;
+    font: 500 13.5px/1.2 var(--sans); letter-spacing: 0.01em;
+    cursor: pointer;
+    box-shadow: 0 6px 24px rgba(5, 15, 26, 0.45);
+    animation: cuefloat 2.4s ease-in-out infinite;
+  }
+  .scrollcue .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--navy); animation: cueblink 1.2s ease-in-out infinite; }
+  @keyframes cueblink { 0%, 100% { opacity: 1; } 50% { opacity: 0.15; } }
+  @keyframes cuefloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(4px); } }
+  @media (prefers-reduced-motion: reduce) { .scrollcue, .scrollcue .dot { animation: none; } }
+  @media (min-width: 560px) { .scrollcue { right: calc(50% - 240px + 14px); } }
+
+  .cta-text { color: var(--muted); font-size: 15px; margin: 0 0 18px; }
+  .consent { display: flex; gap: 12px; align-items: flex-start; font-size: 14px; color: var(--ivory); margin: 4px 0 20px; }
+  .consent input { margin-top: 3px; accent-color: var(--stone); width: 18px; height: 18px; flex: none; }
+
+  .figure { margin-top: 30px; display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+  .figure .pre { font-family: var(--serif); font-size: 26px; color: var(--stone); }
+  .figure .num { font-family: var(--serif); font-size: 66px; line-height: 1; }
+  .caption { margin-top: 12px; color: var(--muted); font-size: 14.5px; }
+  .protonote { margin-top: 8px; color: var(--stone); font-size: 13px; }
+  .list { margin: 8px 0 0; padding: 0; list-style: none; }
+  .list li { padding: 11px 0; border-bottom: 1px solid var(--line); font-size: 15px; }
+  .notes p { margin-top: 12px; color: var(--muted); font-size: 14.5px; }
+  .again { margin-top: 30px; text-align: center; }
+
+  /* Error */
+  .fail { margin: auto 0; }
+  .fail p { margin: 12px 0 28px; color: var(--muted); }
+</style>
+</head>
+<body>
+<div id="app" aria-live="polite"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  // Telegram Mini App bootstrap (safe when opened in a normal browser)
+  var tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+  if (tg) {
+    tg.ready();
+    tg.expand();
+    try { tg.setHeaderColor("#0F2B43"); tg.setBackgroundColor("#0F2B43"); } catch (e) {}
+  }
+
+  var root = document.getElementById("app");
+  var S = { data: null, lang: "en", screen: "home", step: 0, answers: {}, unlocked: false, lead: null };
+
+  // Where the visitor came from, for the leads sheet. Read once on open: ?utm_source=instagram&utm_campaign=...,
+  // a Telegram deep link (t.me/bot/app?startapp=...), or the referring site. Kept for the visit so it survives a resume.
+  var SOURCE = (function () {
+    var out = { source: "", campaign: "" };
+    try {
+      var q = new URLSearchParams(window.location.search);
+      var tgStart = tg && tg.initDataUnsafe && tg.initDataUnsafe.start_param;
+      out.source = q.get("utm_source") || q.get("source") || (tgStart ? "telegram" : "") || "";
+      out.campaign = [q.get("utm_medium"), q.get("utm_campaign"), tgStart].filter(Boolean).join(" / ");
+      if (!out.source && document.referrer) out.source = new URL(document.referrer).hostname.replace(/^www\./, "");
+      if (!out.source) out.source = tg ? "telegram" : "direct";
+      var saved = sessionStorage.getItem("aurum_qualifier_source");
+      if (saved && out.source === "direct") out = JSON.parse(saved);
+      sessionStorage.setItem("aurum_qualifier_source", JSON.stringify(out));
+    } catch (e) {}
+    return out;
+  })();
+
+  /* ---------- language ---------- */
+  function t() { return S.data.content[S.lang] || S.data.content[S.data.defaultLang || "en"]; }
+  function detectLang() {
+    var langs = (S.data.languages || []).map(function (l) { return l.id; });
+    try {
+      var saved = localStorage.getItem("aurum_qualifier_lang");
+      if (saved && langs.indexOf(saved) !== -1) return saved;
+    } catch (e) {}
+    try {
+      var code = tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.language_code;
+      if (code && code.toLowerCase().indexOf("nl") === 0 && langs.indexOf("nl") !== -1) return "nl";
+    } catch (e) {}
+    return S.data.defaultLang || "en";
+  }
+  function setLang(id) {
+    S.lang = id;
+    try { localStorage.setItem("aurum_qualifier_lang", id); } catch (e) {}
+    var name = S.data.appName && S.data.appName[id];
+    if (name) document.title = name;
+    document.documentElement.lang = id;
+  }
+  function buildTopBar() {
+    if (!S.data) return el("div", { class: "topbar" });
+    var name = (S.data.appName && S.data.appName[S.lang]) || S.data.meta.brand;
+    return el("div", { class: "topbar" }, [
+      el("span", { class: "appname", text: name }),
+      el("div", { class: "langswitch" }, (S.data.languages || []).map(function (l) {
+        return el("button", {
+          class: "langbtn" + (l.id === S.lang ? " active" : ""),
+          type: "button", text: l.label,
+          onclick: function () { if (S.lang !== l.id) { setLang(l.id); render(); } }
+        });
+      }))
+    ]);
+  }
+
+  /* ---------- helpers ---------- */
+  // Logo from data.json (meta.logo); falls back to the brand name as text if it is missing or fails to load.
+  function brandMark(cls) {
+    var src = S.data && S.data.meta && S.data.meta.logo;
+    var text = el("div", { class: "brand", text: (S.data && S.data.meta.brand) || "Aurum Premium Interiors" });
+    if (!src) return text;
+    var img = el("img", { class: "logo " + cls, src: src, alt: S.data.meta.brand, width: "480", height: "295" });
+    img.addEventListener("error", function () { if (img.parentNode) img.parentNode.replaceChild(text, img); });
+    return img;
+  }
+  function el(tag, attrs, kids) {
+    var n = document.createElement(tag);
+    attrs = attrs || {};
+    Object.keys(attrs).forEach(function (k) {
+      var v = attrs[k];
+      if (v === false || v === null || v === undefined) return;
+      if (k === "class") n.className = v;
+      else if (k === "text") n.textContent = v;
+      else if (k.indexOf("on") === 0) n.addEventListener(k.slice(2), v);
+      else n.setAttribute(k, v === true ? "" : v);
+    });
+    (kids || []).forEach(function (c) {
+      if (c === null || c === undefined || c === false) return;
+      n.appendChild(typeof c === "string" ? document.createTextNode(c) : c);
+    });
+    return n;
+  }
+  function mount(node) {
+    root.innerHTML = "";
+    var oldCue = document.querySelector(".scrollcue");
+    if (oldCue) oldCue.remove();
+    var wrap = el("div", {}, [buildTopBar()]);
+    node.classList.add("enter");
+    wrap.appendChild(node);
+    root.appendChild(wrap);
+    window.scrollTo(0, 0);
+  }
+  function openLink(url) {
+    if (tg && tg.openLink && url.indexOf("http") === 0) tg.openLink(url);
+    else if (url.indexOf("http") === 0) window.open(url, "_blank", "noopener");
+    else window.location.href = url;
+  }
+  function euro(n) {
+    return new Intl.NumberFormat(S.lang === "nl" ? "nl-NL" : "en-GB", { style: "currency", currency: S.data.pricing.currency, maximumFractionDigits: 0 }).format(n);
+  }
+  function fmtMeters(v) {
+    var n = Number(v);
+    var s = (Math.round(n * 10) / 10).toString();
+    return s.replace(".", ",");
+  }
+  // Accepts "8,6", "8.6", "8" (spaces ignored). Returns a Number or NaN.
+  function parseDecimal(v) {
+    var s = String(v || "").replace(/\s/g, "");
+    if (!/^\d+([.,]\d+)?$/.test(s)) return NaN;
+    return Number(s.replace(",", "."));
+  }
+  function lengthKnown() { return !S.answers.meters_unknown && isFinite(Number(S.answers.meters)) && S.answers.meters !== undefined && S.answers.meters !== ""; }
+
+  /* ---------- progress saving (survives closing the app) ---------- */
+  var SAVE_KEY = "aurum_qualifier_progress_v1";
+  function saveProgress() {
+    try {
+      if (S.screen === "home" || S.unlocked) { localStorage.removeItem(SAVE_KEY); return; }
+      localStorage.setItem(SAVE_KEY, JSON.stringify({ answers: S.answers, step: S.step, screen: S.screen, at: Date.now() }));
+    } catch (e) {}
+  }
+  function restoreProgress() {
+    try {
+      var raw = localStorage.getItem(SAVE_KEY);
+      if (!raw) return false;
+      var p = JSON.parse(raw);
+      if (!p || Date.now() - p.at > 14 * 864e5) { localStorage.removeItem(SAVE_KEY); return false; }
+      S.answers = p.answers || S.answers;
+      // Drop saved choices that no longer exist (e.g. an option removed from data.json since the client started).
+      t().questions.forEach(function (q) { q.groups.forEach(function (g) {
+        if (g.options && S.answers[g.id] !== undefined && !g.options.some(function (o) { return o.id === S.answers[g.id]; })) delete S.answers[g.id];
+      }); });
+      S.step = Math.min(p.step || 0, t().questions.length - 1); S.screen = p.screen === "result" ? "result" : "question";
+      return true;
+    } catch (e) { return false; }
+  }
+  // Requires exactly one "@", a domain with at least one "." after it, and a
+  // final segment (the TLD) of at least two letters — i.e. always local@domain.tld.
+  function isValidEmail(v) {
+    return /^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$/.test(v);
+  }
+
+  /* ---------- data ---------- */
+  function initAnswers() {
+    S.answers = {};
+    t().questions.forEach(function (q) {
+      q.groups.forEach(function (g) {
+        if (g.default !== undefined) S.answers[g.id] = g.default;
+      });
+    });
+  }
+  function findOption(groupId, optionId) {
+    var found = null;
+    t().questions.forEach(function (q) {
+      q.groups.forEach(function (g) {
+        if (g.id === groupId && g.options) g.options.forEach(function (o) { if (o.id === optionId) found = o; });
+      });
+    });
+    return found;
+  }
+  function computeStyleId() {
+    var shape = S.answers.front_shape, material = S.answers.front_material, path = S.answers.appliance_path;
+    if (shape === "flat") {
+      if (material === "painted") return "modern";
+      if (material === "veneer") return "scandi_japandi";
+      if (material === "steel" || material === "specialty") return "industrial";
+    } else if (shape === "framed") {
+      if (path === "freestanding") return "country";
+      if (path === "built_in") return "classic";
+      if (path === "own") {
+        if (material === "veneer") return "country";
+        if (material === "painted") return "classic";
+      }
+    }
+    return null;
+  }
+  function computeBudget() {
+    if (!lengthKnown()) return null;
+    var p = S.data.pricing, a = S.answers, style = computeStyleId();
+    var total = p.perMeter[style] * Number(a.meters);
+    total *= p.shape[a.shape];
+    total *= p.island[a.island];
+    total *= (p.fronts[a.front_shape] && p.fronts[a.front_shape][a.front_material]) || 1;
+    ["worktop", "hardware", "sink", "tap"].forEach(function (k) {
+      total += p.adders[k][a[k]] || 0;
+    });
+    if (a.appliance_path && a.appliance_path !== "own") {
+      var tierAdders = p.adders.appliances[a.appliance_path];
+      total += (tierAdders && tierAdders[a.appliance_tier]) || 0;
+    }
+    total = Math.floor(total / p.roundTo) * p.roundTo;
+    return Math.max(total, p.minimumFrom);
+  }
+  function isGroupVisible(g) {
+    if (!g.visibleWhen) return true;
+    var v = S.answers[g.visibleWhen.group];
+    if (g.visibleWhen.in) return g.visibleWhen.in.indexOf(v) !== -1;
+    if (g.visibleWhen.notIn) return g.visibleWhen.notIn.indexOf(v) === -1;
+    return true;
+  }
+  function groupComplete(g) {
+    if (!isGroupVisible(g)) return true;
+    var v = S.answers[g.id];
+    if (g.type === "number") {
+      if (S.answers[g.id + "_unknown"]) return true;
+      var n = Number(v);
+      return v !== undefined && v !== "" && isFinite(n) && n >= g.min && n <= g.max;
+    }
+    return !!v;
+  }
+  function missingGroups(q) {
+    return q.groups.filter(function (g) { return !groupComplete(g); });
+  }
+  function groupName(q, g) { return g.label || q.summary || q.title; }
+  function questionComplete(q) { return q.groups.every(groupComplete); }
+  function summaryValue(q) {
+    var parts = [];
+    q.groups.forEach(function (g) {
+      var v = S.answers[g.id];
+      if (g.type === "number") parts.push(S.answers[g.id + "_unknown"] ? (g.unsureSummary || "—") : fmtMeters(v) + " " + g.unit);
+      else {
+        var o = findOption(g.id, v);
+        if (o) parts.push(o.label);
+      }
+    });
+    return parts.join(", ");
+  }
+
+  /* ---------- screens ---------- */
+  function renderHome() {
+    var h = t().home;
+    mount(el("div", { class: "screen" }, [
+      el("div", { class: "home-top" }, [brandMark("logo-home")]),
+      el("div", { class: "home-main" }, [
+        el("h1", { text: h.headline }),
+        el("div", { class: "home-lines" }, [
+          el("p", { text: h.howItWorks }),
+          h.whatYouGet ? el("p", { class: "sub", text: h.whatYouGet }) : null
+        ]),
+        el("div", { class: "home-cta" }, [
+          el("button", { class: "btn", type: "button", text: h.button, onclick: function () { S.screen = "question"; S.step = 0; render(); } })
+        ]),
+        el("p", { class: "trust", text: h.trust })
+      ])
+    ]));
+  }
+
+  function renderQuestion() {
+    var q = t().questions[S.step], total = t().questions.length, ui = t().ui;
+    var cont, missingNote = el("div", { class: "missingnote", role: "alert", hidden: true });
+    var noteShown = false;
+
+    // The button stays clickable. Clicking with something unanswered names what is missing;
+    // once the note is up it updates live and disappears when everything is answered.
+    function updateMissing() {
+      var miss = missingGroups(q);
+      var boxes = root.querySelectorAll(".group[data-group]");
+      Array.prototype.forEach.call(boxes, function (b) {
+        var gid = b.getAttribute("data-group");
+        b.classList.toggle("missing", noteShown && miss.some(function (g) { return g.id === gid; }));
+      });
+      if (!noteShown || miss.length === 0) { missingNote.hidden = true; noteShown = noteShown && miss.length > 0; return; }
+      missingNote.innerHTML = "";
+      missingNote.appendChild(el("div", { text: ui.missing }));
+      missingNote.appendChild(el("ul", {}, miss.map(function (g) { return el("li", { text: groupName(q, g) }); })));
+      missingNote.hidden = false;
+    }
+    function refresh() { updateMissing(); saveProgress(); }
+
+    var progress = el("div", { class: "progress", "aria-hidden": "true" }, t().questions.map(function (_, i) {
+      return el("i", { class: i <= S.step ? "on" : "" });
+    }));
+
+    // Groups whose answer another group's visibility/options depend on: picking
+    // a new value here can invalidate a dependent answer, so we clear it and
+    // re-render the whole question rather than just toggling the continue button.
+    var DEPENDENTS = { front_shape: "front_material", appliance_path: "appliance_tier" };
+
+    var groups = q.groups.filter(isGroupVisible).map(function (g) {
+      var box = el("div", { class: "group" });
+      if (g.label && (g.type === "choice" || g.type === "select")) box.appendChild(el("div", { class: "group-label", text: g.label }));
+
+      if (g.type === "choice") {
+        var list = el("div", { class: "options", role: "group", "aria-label": g.label || q.title });
+        var btns = [];
+        var visibleOptions = g.options.filter(function (o) {
+          return !o.shapes || o.shapes.indexOf(S.answers.front_shape) !== -1;
+        });
+        visibleOptions.forEach(function (o) {
+          var hint = o.hint;
+          if (g.id === "appliance_tier" && q.applianceHints) {
+            var pathHints = q.applianceHints[S.answers.appliance_path];
+            hint = (pathHints && pathHints[o.id]) || hint;
+          }
+          var thumbSrc = null;
+          if (g.id === "front_material" && q.frontImages) {
+            thumbSrc = q.frontImages[S.answers.front_shape + "_" + o.id] || null;
+          } else if (o.image) {
+            thumbSrc = o.image;
+          }
+          var b = el("button", {
+            class: "opt", type: "button",
+            "aria-pressed": S.answers[g.id] === o.id ? "true" : "false",
+            disabled: o.disabled === true,
+            onclick: function () {
+              if (o.disabled) return;
+              S.answers[g.id] = o.id;
+              var depId = DEPENDENTS[g.id];
+              if (depId) {
+                var depVal = S.answers[depId];
+                if (depVal) {
+                  var depOpt = findOption(depId, depVal);
+                  if (depOpt && depOpt.shapes && depOpt.shapes.indexOf(S.answers.front_shape) === -1) {
+                    delete S.answers[depId];
+                  } else if (depId === "appliance_tier") {
+                    delete S.answers[depId];
+                  }
+                }
+                render();
+                return;
+              }
+              btns.forEach(function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+              refresh();
+            }
+          }, [
+            thumbSrc ? el("span", { class: "opt-thumb" }, [el("img", { src: thumbSrc, alt: o.label })]) : null,
+            el("span", { class: "txt" }, [o.label, hint ? el("small", { text: hint }) : null]),
+            o.badge ? el("span", { class: "badge", text: o.badge }) : el("span", { class: "mark" })
+          ]);
+          btns.push(b);
+          list.appendChild(b);
+        });
+        box.appendChild(list);
+      } else if (g.type === "select") {
+        var sel = el("select", { class: "select", "aria-label": g.label || q.title });
+        g.options.forEach(function (o) {
+          sel.appendChild(el("option", {
+            value: o.id, selected: S.answers[g.id] === o.id ? true : undefined,
+            disabled: o.disabled === true,
+            text: o.label + (o.badge ? " — " + o.badge : "")
+          }));
+        });
+        sel.addEventListener("change", function () {
+          S.answers[g.id] = sel.value;
+          refresh();
+        });
+        box.appendChild(el("div", { class: "selectwrap" }, [sel]));
+      } else if (g.type === "number") {
+        // Text input (not type=number) so a comma decimal like "8,6" is kept as typed.
+        var unkKey = g.id + "_unknown", txtKey = g.id + "_text";
+        var err = el("div", { class: "numerr" });
+        var input = el("input", {
+          type: "text", inputmode: "decimal", autocomplete: "off",
+          placeholder: g.placeholder || "", "aria-label": g.label,
+          value: S.answers[txtKey] !== undefined ? S.answers[txtKey] : (S.answers[g.id] ? fmtMeters(S.answers[g.id]) : "")
+        });
+        var numwrap = el("div", { class: "numwrap" + (S.answers[unkKey] ? " off" : "") }, [input, el("span", { class: "unit", text: g.unit })]);
+        var note = el("p", { class: "unsurenote", text: g.unsureNote || "", hidden: !S.answers[unkKey] });
+        var unsureBtn = null;
+        function showRangeError() {
+          var raw = input.value.trim();
+          var n = parseDecimal(raw);
+          if (raw !== "" && (!isFinite(n) || n < g.min || n > g.max)) {
+            err.textContent = ui.lengthRangeError
+              .replace("{min}", g.min).replace("{max}", g.max).replace("{unit}", g.unit);
+          } else err.textContent = "";
+        }
+        input.addEventListener("input", function () {
+          var raw = input.value.trim();
+          S.answers[txtKey] = input.value;
+          var n = parseDecimal(raw);
+          S.answers[g.id] = isFinite(n) ? String(n) : "";
+          if (raw !== "" && S.answers[unkKey]) {
+            delete S.answers[unkKey];
+            if (unsureBtn) unsureBtn.setAttribute("aria-pressed", "false");
+            numwrap.classList.remove("off"); note.hidden = true;
+          }
+          // Only flag a range problem once the value could be complete, so "1" on the way to "12" doesn't nag.
+          if (err.textContent) showRangeError();
+          refresh();
+        });
+        input.addEventListener("blur", showRangeError);
+        box.appendChild(el("div", { class: "group-label", text: g.label }));
+        box.appendChild(numwrap);
+        if (g.decimalHint) box.appendChild(el("p", { class: "numhint", text: g.decimalHint }));
+        box.appendChild(err);
+        if (g.help) box.appendChild(el("p", { class: "numhelp", text: g.help }));
+        if (g.unsureLabel) {
+          unsureBtn = el("button", {
+            class: "opt unsure", type: "button",
+            "aria-pressed": S.answers[unkKey] ? "true" : "false",
+            onclick: function () {
+              var on = !S.answers[unkKey];
+              if (on) {
+                S.answers[unkKey] = true; S.answers[g.id] = ""; S.answers[txtKey] = "";
+                input.value = ""; err.textContent = "";
+              } else delete S.answers[unkKey];
+              unsureBtn.setAttribute("aria-pressed", on ? "true" : "false");
+              numwrap.classList.toggle("off", on); note.hidden = !on;
+              refresh();
+            }
+          }, [el("span", { class: "txt", text: g.unsureLabel }), el("span", { class: "mark" })]);
+          box.appendChild(unsureBtn);
+          box.appendChild(note);
+        }
+      }
+      box.setAttribute("data-group", g.id);
+      return box;
+    });
+
+    cont = el("button", {
+      class: "btn", type: "button", text: ui.continue,
+      onclick: function () {
+        if (!questionComplete(q)) {
+          noteShown = true; updateMissing();
+          missingNote.scrollIntoView({ behavior: "smooth", block: "center" });
+          return;
+        }
+        if (S.step < total - 1) { S.step += 1; render(); }
+        else { S.screen = "result"; render(); }
+      }
+    });
+
+    var back = el("button", {
+      class: "linkbtn", type: "button", text: ui.back,
+      onclick: function () {
+        if (S.step > 0) { S.step -= 1; render(); }
+        else { S.screen = "home"; render(); }
+      }
+    });
+
+    mount(el("div", { class: "screen" }, [
+      el("div", { class: "qhead" }, [back, el("span", { class: "count", text: (ui.stepOf || "{n} / {total}").replace("{n}", S.step + 1).replace("{total}", total) })]),
+      progress,
+      el("div", { class: "qbody" }, [
+        el("h2", { text: q.title }),
+        q.help ? el("p", { class: "help", text: q.help }) : null,
+        q.info ? el("p", { class: "info", text: q.info }) : null
+      ].concat(groups)),
+      el("div", { class: "qfoot" }, [missingNote, cont])
+    ]));
+    refresh();
+  }
+
+  function renderResult() {
+    var d = t(), style = d.styles[computeStyleId()];
+    var rows = d.questions.map(function (q) {
+      return el("div", { class: "row" }, [el("span", { text: q.summary }), el("span", { text: summaryValue(q) })]);
+    });
+
+    var top = el("div", { class: "result-top" }, [
+      brandMark("logo-result"),
+      el("div", { class: "kicker", text: d.result.title }),
+      el("h2", { class: "style-name", text: style.name }),
+      (style.subtitle || style.also) ? el("p", { class: "style-also", text: style.subtitle || style.also }) : null,
+      style.image ? el("div", { class: "style-image" }, [
+        el("img", { src: style.image, alt: style.name + " " + d.result.imageAlt }),
+        el("span", { class: "style-image-caption", text: d.result.imageCaption })
+      ]) : null,
+      el("p", { class: "style-desc", text: style.description }),
+      style.fitsIn ? el("p", { class: "style-fit", text: style.fitsIn }) : null
+    ]);
+
+    var choices = el("div", { class: "block" }, [
+      el("h3", { text: d.result.answersTitle }),
+      el("div", { class: "rows" }, rows)
+    ]);
+
+    var lower = S.unlocked ? budgetBlock(style) : gateBlock();
+
+    var again = el("div", { class: "again" }, [
+      el("button", {
+        class: "linkbtn", type: "button", text: d.ui.restart,
+        onclick: function () { initAnswers(); S.unlocked = false; S.lead = null; S.step = 0; S.screen = "home"; saveProgress(); render(); }
+      })
+    ]);
+
+    // Budget/lead block sits right under the style, before the long list of choices.
+    mount(el("div", { class: "screen" }, [top, lower, choices, again]));
+    saveProgress();
+    if (S.justUnlocked) {
+      // Land on the budget straight after sending, instead of back at the top.
+      S.justUnlocked = false;
+      setTimeout(function () { lower.scrollIntoView({ behavior: "smooth", block: "start" }); }, 60);
+    } else {
+      var cueText = S.unlocked ? d.result.scrollCueUnlocked : (lengthKnown() ? d.result.scrollCue : d.result.scrollCueUnsure);
+      attachScrollCue(lower, cueText);
+    }
+  }
+
+  function gateBlock() {
+    var g = t().gate;
+    var required = g.required || ["name", "email"];
+    var unsure = !lengthKnown();
+    var formWrap = el("div", { class: "form" });
+    var form = el("div", {});
+    var refs = {};
+
+    function labelText(id) {
+      return g.fields[id] + (required.indexOf(id) !== -1 ? " *" : "");
+    }
+
+    function field(id, type, autocomplete) {
+      var input = el("input", { type: type, id: "f-" + id, autocomplete: autocomplete, autocapitalize: id === "name" ? "words" : "off" });
+      var err = el("div", { class: "err" });
+      refs[id] = { input: input, err: err };
+      if (id === "email") {
+        input.addEventListener("blur", function () {
+          var v = input.value.trim();
+          err.textContent = (v === "" || isValidEmail(v)) ? "" : g.errors.email;
+        });
+      }
+      return el("div", { class: "field" }, [el("label", { for: "f-" + id, text: labelText(id) }), input, err]);
+    }
+
+    // Phone: country code select + local number, both optional unless "phone" is in g.required
+    var phoneCodes = g.phoneCodes || [];
+    var phoneSelect = el("select", { class: "select", id: "f-phone-country", "aria-label": g.fields.phoneCountry });
+    phoneCodes.forEach(function (c, i) {
+      phoneSelect.appendChild(el("option", { value: c.id, selected: i === 0 ? true : undefined, text: c.label }));
+    });
+    var phoneInput = el("input", { type: "tel", id: "f-phone", autocomplete: "tel-national", placeholder: (phoneCodes[0] && phoneCodes[0].example) || "" });
+    // Fixed "(0)" shown between country code and number, e.g. +31 (0) 6 12345678.
+    var trunk = el("span", { class: "trunk", "aria-hidden": "true", text: phoneCodes[0] && phoneCodes[0].trunk ? "(" + phoneCodes[0].trunk + ")" : "", hidden: !(phoneCodes[0] && phoneCodes[0].trunk) });
+    phoneSelect.addEventListener("change", function () {
+      var c = phoneCodes.filter(function (x) { return x.id === phoneSelect.value; })[0];
+      phoneInput.placeholder = (c && c.example) || "";
+      trunk.textContent = c && c.trunk ? "(" + c.trunk + ")" : "";
+      trunk.hidden = !(c && c.trunk);
+    });
+    // If someone types the 0 anyway ("06 12345678"), drop it rather than reject the number.
+    function nationalDigits(code) {
+      var digits = phoneInput.value.replace(/\D/g, "");
+      if (code && code.trunk) while (digits.indexOf(code.trunk) === 0) digits = digits.slice(code.trunk.length);
+      return digits;
+    }
+    var phoneErr = el("div", { class: "err" });
+    refs.phone = { select: phoneSelect, input: phoneInput, err: phoneErr };
+    var phoneField = el("div", { class: "field" }, [
+      el("label", { for: "f-phone", text: labelText("phone") }),
+      el("div", { class: "phonerow" }, [
+        el("div", { class: "selectwrap phonecode" }, [phoneSelect]),
+        trunk,
+        phoneInput
+      ]),
+      phoneErr
+    ]);
+
+    // AVG: contacting someone about their own request needs no consent tick (art. 6(1)(b)).
+    // News/marketing does: separate, optional, never pre-ticked. Leave g.marketing empty to hide it.
+    var marketing = el("input", { type: "checkbox", id: "f-marketing" });
+    var submit = el("button", {
+      class: "btn", type: "button", text: unsure ? (g.buttonUnsure || g.button) : g.button,
+      onclick: function () {
+        var ok = true;
+        var name = refs.name.input.value.trim();
+        var email = refs.email.input.value.trim();
+        var phoneCode = phoneCodes.filter(function (x) { return x.id === phoneSelect.value; })[0];
+        var phoneDigits = nationalDigits(phoneCode);
+
+        refs.name.err.textContent = name.length < 2 ? (ok = false, g.errors.name) : "";
+        refs.email.err.textContent = isValidEmail(email) ? "" : (ok = false, g.errors.email);
+
+        var phoneRequired = required.indexOf("phone") !== -1;
+        if (phoneDigits.length === 0) {
+          refs.phone.err.textContent = phoneRequired ? (ok = false, g.errors.phone) : "";
+        } else if (phoneCode && (phoneDigits.length < phoneCode.minDigits || phoneDigits.length > phoneCode.maxDigits)) {
+          refs.phone.err.textContent = (ok = false, g.errors.phone);
+        } else {
+          refs.phone.err.textContent = "";
+        }
+
+        if (!ok) {
+          var firstErr = form.querySelector(".err:not(:empty)");
+          if (firstErr) firstErr.parentNode.scrollIntoView({ behavior: "smooth", block: "center" });
+          return;
+        }
+        var stageOpt = findOption("stage", S.answers.stage);
+        S.lead = {
+          name: name, email: email,
+          phone: phoneDigits ? (phoneSelect.value === "other" ? refs.phone.input.value.trim() : phoneSelect.value + " " + phoneDigits) : "",
+          marketingOptIn: !!(g.marketing && marketing.checked),
+          style: computeStyleId(), budgetFrom: computeBudget(),
+          priorityFollowUp: !!(stageOpt && stageOpt.flagFollowUp),
+          clientType: (stageOpt && stageOpt.clientType) || "homeowner",
+          timing: timingSelect ? timingSelect.value : "",
+          answers: JSON.parse(JSON.stringify(S.answers)), createdAt: new Date().toISOString()
+        };
+        submitLead(S.lead);
+        track(pad2(t().questions.length + 2) + " lead sent");
+        S.unlocked = true;
+        S.justUnlocked = true;
+        render();
+      }
+    });
+
+    form.appendChild(field("name", "text", "name"));
+    form.appendChild(field("email", "email", "email"));
+    form.appendChild(phoneField);
+    // Optional: when the client wants the kitchen. The strongest single qualifier for follow-up.
+    var timingSelect = null;
+    if (g.timing) {
+      timingSelect = el("select", { class: "select", id: "f-timing" });
+      timingSelect.appendChild(el("option", { value: "", text: g.timing.placeholder }));
+      g.timing.options.forEach(function (o) { timingSelect.appendChild(el("option", { value: o.id, text: o.label })); });
+      form.appendChild(el("div", { class: "field" }, [
+        el("label", { for: "f-timing", text: g.timing.label }),
+        el("div", { class: "selectwrap" }, [timingSelect])
+      ]));
+    }
+    if (g.marketing) form.appendChild(el("label", { class: "consent" }, [marketing, el("span", { text: g.marketing })]));
+    form.appendChild(submit);
+    form.appendChild(privacyNote(g));
+    formWrap.appendChild(form);
+
+    // Form is shown straight away: one button, one click to submit.
+    var prompt = unsure ? (g.promptUnsure || g.prompt) : g.prompt;
+    return el("div", { class: "block" }, [
+      el("h3", { text: g.title }),
+      prompt ? el("p", { class: "gate-prompt", text: prompt }) : null,
+      g.text ? el("p", { class: "gate-text", text: g.text }) : null,
+      formWrap
+    ]);
+  }
+
+  // Short notice under the button; the full text opens in place (or links out if contact.privacyUrl is set).
+  function privacyNote(g) {
+    var p = g.privacy || {};
+    var url = S.data.contact && S.data.contact.privacyUrl;
+    var details = el("div", { class: "privacy-details", hidden: true },
+      (p.details || []).map(function (line) {
+        return el("p", { text: line.replace("{email}", S.data.contact.email) });
+      }));
+    var link = el("button", {
+      class: "linkbtn privacy-link", type: "button", text: p.linkLabel || "Privacy",
+      "aria-expanded": "false",
+      onclick: function () {
+        if (url) { openLink(url); return; }
+        details.hidden = !details.hidden;
+        link.setAttribute("aria-expanded", details.hidden ? "false" : "true");
+      }
+    });
+    return el("div", { class: "privacy" }, [
+      el("p", {}, [p.short ? p.short + " " : "", link]),
+      details
+    ]);
+  }
+
+  // Floating cue on the result page: pulses until the budget / lead block is on screen.
+  function attachScrollCue(target, text) {
+    var old = document.querySelector(".scrollcue");
+    if (old) old.remove();
+    if (!target || !text || !("IntersectionObserver" in window)) return;
+    var cue = el("button", {
+      class: "scrollcue", type: "button", "aria-label": text,
+      onclick: function () { target.scrollIntoView({ behavior: "smooth", block: "start" }); }
+    }, [el("span", { class: "dot", "aria-hidden": "true" }), el("span", { text: text })]);
+    cue.hidden = true;
+    document.body.appendChild(cue);
+    var seen = false;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) seen = true;
+        // Show only while the block is still below the screen and hasn't been reached yet.
+        cue.hidden = seen || en.isIntersecting || en.boundingClientRect.top < 0;
+        if (seen) { io.disconnect(); cue.remove(); }
+      });
+    }, { threshold: 0.15 });
+    // Wait for the jump back to the top of the page to settle, or the block counts as "seen" at once.
+    setTimeout(function () { io.observe(target); }, 200);
+  }
+
+  function budgetBlock(style) {
+    var d = t(), b = d.budget, c = S.data.contact;
+    var caption = b.caption.replace("{style}", style.name).replace("{meters}", fmtMeters(S.answers.meters));
+
+    var waText = (S.lead && S.lead.clientType === "designer" && b.whatsappTextDesigner) ? b.whatsappTextDesigner
+      : (S.lead && S.lead.priorityFollowUp && b.whatsappTextPriority) ? b.whatsappTextPriority : b.whatsappText;
+    // Fill in who is writing and what they chose, so the first WhatsApp message already has context.
+    var budgetFrom = computeBudget();
+    waText = waText
+      .replace("{name}", (S.lead && S.lead.name) || "")
+      .replace("{style}", style.name)
+      .replace("{budgetPart}", budgetFrom === null ? (b.budgetUnknown || "") : b.prefix + " " + euro(budgetFrom));
+    var wa = "https://wa.me/" + c.whatsapp + "?text=" + encodeURIComponent(waText);
+    var mail = "mailto:" + c.email + "?subject=" + encodeURIComponent(b.emailSubject);
+
+    var known = lengthKnown();
+    return el("div", { class: "block" }, [
+      el("h3", { text: known ? b.title : (b.unsureTitle || b.title) }),
+      known ? el("div", { class: "figure" }, [
+        el("span", { class: "pre", text: b.prefix }),
+        el("span", { class: "num", text: euro(computeBudget()) })
+      ]) : null,
+      el("p", { class: "caption", text: known ? caption : b.unsureText }),
+      known && S.data.pricing.placeholder ? el("p", { class: "protonote", text: d.ui.prototypeNote }) : null,
+      el("div", { style: "margin-top:32px" }, [
+        el("h3", { text: b.includedTitle, style: "font-size:21px" }),
+        el("ul", { class: "list" }, b.included.map(function (t) { return el("li", { text: t }); })),
+        el("div", { class: "notes" }, b.notes.map(function (t) { return el("p", { text: t }); }))
+      ]),
+      el("div", { style: "margin-top:34px" }, [
+        el("h3", { text: b.ctaTitle, style: "margin-bottom:10px" }),
+        b.ctaText ? el("p", { class: "cta-text", text: b.ctaText }) : null,
+        el("button", { class: "btn", type: "button", text: b.whatsappLabel, onclick: function () { openLink(wa); } }),
+        el("button", { class: "btn ghost", type: "button", text: b.emailLabel, onclick: function () { openLink(mail); } })
+      ])
+    ]);
+  }
+
+  // One flat row for the Google Sheet. Keys must match the sheet's header row exactly.
+  // Labels are always taken from the English content so the sheet reads the same whatever language the client used.
+  function leadRow(lead) {
+    var en = S.data.content.en, a = lead.answers;
+    function lab(groupId) {
+      var v = a[groupId], out = "";
+      en.questions.forEach(function (q) { q.groups.forEach(function (g) {
+        if (g.id === groupId && g.options) g.options.forEach(function (o) { if (o.id === v) out = o.label; });
+      }); });
+      return out;
+    }
+    var style = lead.style && en.styles[lead.style] ? en.styles[lead.style].name : "";
+    return {
+      "Received": lead.createdAt,
+      "Name": lead.name, "Email": lead.email, "Phone": lead.phone,
+      "Language": S.lang.toUpperCase(),
+      "Location": lab("location"), "Project stage": lab("stage"),
+      "Priority follow-up": lead.priorityFollowUp ? "Yes" : "No",
+      "Client type": lead.clientType === "designer" ? "Interior designer / architect" : "Homeowner",
+      "Timing": (function () {
+        var tm = en.gate.timing, o = tm && tm.options.filter(function (x) { return x.id === lead.timing; })[0];
+        return o ? o.label : "Not given";
+      })(),
+      "Style": style,
+      "Kitchen shape": lab("shape"), "Island": lab("island"),
+      "Length (m)": a.meters_unknown ? "Not sure yet" : fmtMeters(a.meters),
+      "Front shape": lab("front_shape"), "Front material": lab("front_material"),
+      "Worktop": lab("worktop"), "Appliances": lab("appliance_path"), "Appliance segment": lab("appliance_tier"),
+      "Drawers": lab("hardware"), "Sink": lab("sink"), "Tap": lab("tap"),
+      "Starting budget (EUR)": lead.budgetFrom === null ? "Needs length" : lead.budgetFrom,
+      "Marketing opt-in": lead.marketingOptIn ? "Yes" : "No",
+      "Source": SOURCE.source, "Campaign": SOURCE.campaign,
+      "Status": "New", "Notes": "",
+      // Keys starting with "_" are not written to the sheet; the script uses this for the client's email.
+      "_email": emailData(lead)
+    };
+  }
+  // What the confirmation email needs, in the language the client used.
+  function emailData(lead) {
+    var d = t(), e = d.email || {};
+    var style = d.styles[lead.style];
+    return {
+      lang: S.lang,
+      to: lead.email,
+      name: lead.name,
+      subject: (e.subject || "").replace("{style}", style ? style.name : ""),
+      style: style ? style.name : "",
+      styleId: lead.style || "",
+      imageCaption: d.result.imageCaption || "",
+      styleDescription: style ? style.description : "",
+      budgetKnown: lead.budgetFrom !== null,
+      budget: lead.budgetFrom !== null ? d.budget.prefix + " " + euro(lead.budgetFrom) : "",
+      choices: d.questions.map(function (q) { return [q.summary, summaryValue(q)]; }),
+      phone: S.data.contact.phoneDisplay || "",
+      whatsapp: "https://wa.me/" + S.data.contact.whatsapp,
+      text: e
+    };
+  }
+  // Anonymous funnel counting: which screens people reach. No name, email or stored id;
+  // the session id lives only in memory for this visit. Sent to the same Apps Script, into a "Funnel" tab.
+  function pad2(n) { return (n < 10 ? "0" : "") + n; }
+  var SESSION_ID = Math.random().toString(36).slice(2, 10);
+  var tracked = {};
+  function track(event) {
+    if (tracked[event]) return;
+    tracked[event] = true;
+    var url = S.data && S.data.contact && S.data.contact.leadEndpoint;
+    if (!url) return;
+    var body = JSON.stringify({ _type: "event", session: SESSION_ID, event: event, lang: S.lang, source: SOURCE.source, at: new Date().toISOString() });
+    try { fetch(url, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: body, keepalive: true }).catch(function () {}); } catch (e) {}
+  }
+
+  function submitLead(lead) {
+    // Sends the lead to the Google Apps Script web app set in data.json → contact.leadEndpoint.
+    // text/plain + no-cors avoids the CORS preflight that Apps Script does not answer.
+    var url = S.data.contact && S.data.contact.leadEndpoint;
+    var row = leadRow(lead);
+    if (!url) { if (window.console) console.warn("Lead NOT sent: contact.leadEndpoint is empty in data.json", row); return; }
+    var body = JSON.stringify(row);
+    try {
+      fetch(url, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: body, keepalive: true })
+        .catch(function () { try { navigator.sendBeacon && navigator.sendBeacon(url, body); } catch (e) {} });
+    } catch (e) {
+      try { navigator.sendBeacon && navigator.sendBeacon(url, body); } catch (e2) {}
+    }
+  }
+
+  function renderError() {
+    // data.json may not have loaded, so the error text lives here in both languages.
+    var nl = /^nl/i.test(S.lang || navigator.language || "");
+    var ui = nl
+      ? { errorTitle: "De keukenplanner kon niet laden", errorText: "Controleer je verbinding en probeer het opnieuw.", errorRetry: "Probeer opnieuw" }
+      : { errorTitle: "The configurator could not load", errorText: "Check your connection and try again.", errorRetry: "Try again" };
+    mount(el("div", { class: "screen" }, [
+      el("div", { class: "brand", text: "Aurum Premium Interiors" }),
+      el("div", { class: "fail" }, [
+        el("h2", { text: ui.errorTitle }),
+        el("p", { text: ui.errorText }),
+        el("button", { class: "btn", type: "button", text: ui.errorRetry, onclick: load })
+      ])
+    ]));
+  }
+
+  function render() {
+    if (S.screen === "home") { renderHome(); track("00 opened"); }
+    else if (S.screen === "question") { renderQuestion(); track(pad2(S.step + 1) + " " + t().questions[S.step].id); }
+    else { renderResult(); track(pad2(t().questions.length + 1) + " result seen"); }
+  }
+
+  function load() {
+    fetch("data.json?v=" + Date.now(), { cache: "no-store" })
+      .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+      .then(function (d) {
+        S.data = d; S.lang = detectLang(); setLang(S.lang); initAnswers(); S.screen = "home";
+        restoreProgress(); // resume where the client left off, if they closed the app mid-way
+        render();
+      })
+      .catch(function () { renderError(); });
+  }
+
+  load();
+})();
+</script>
+</body>
+</html>
