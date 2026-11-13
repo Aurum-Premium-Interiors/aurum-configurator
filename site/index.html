@@ -12,6 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant:wght@400;500&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="pricing.js"></script>
 <style>
   :root {
     --navy: #0F2B43;
@@ -238,6 +239,7 @@
   .phonerow input[type="tel"]:focus { outline: 0; border-color: var(--stone); }
   .block > p.gate-prompt { font-family: var(--serif); font-size: 21px; color: var(--ivory); }
   .block > p.gate-text { margin-top: 10px; color: var(--muted); font-size: 15px; }
+  .hp { position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden; }
   .privacy { margin-top: 16px; color: var(--muted); font-size: 13.5px; line-height: 1.5; }
   .privacy .linkbtn { font-size: 13.5px; padding: 0; color: var(--ivory); }
   .privacy-details { margin-top: 10px; padding: 12px 16px; border-left: 1px solid var(--line-strong); }
@@ -298,7 +300,7 @@
   }
 
   var root = document.getElementById("app");
-  var S = { data: null, lang: "en", screen: "home", step: 0, answers: {}, unlocked: false, lead: null };
+  var S = { data: null, pricing: null, lang: "en", screen: "home", step: 0, answers: {}, unlocked: false, lead: null };
 
   // Where the visitor came from, for the leads sheet. Read once on open: ?utm_source=instagram&utm_campaign=...,
   // a Telegram deep link (t.me/bot/app?startapp=...), or the referring site. Kept for the visit so it survives a resume.
@@ -329,6 +331,14 @@
     try {
       var code = tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.language_code;
       if (code && code.toLowerCase().indexOf("nl") === 0 && langs.indexOf("nl") !== -1) return "nl";
+    } catch (e) {}
+    // Then the browser's own language list: a Dutch browser opens in Dutch, anything else in the default.
+    try {
+      var prefs = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || ""];
+      for (var i = 0; i < prefs.length; i++) {
+        var base = String(prefs[i] || "").toLowerCase().split("-")[0];
+        if (base && langs.indexOf(base) !== -1) return base;
+      }
     } catch (e) {}
     return S.data.defaultLang || "en";
   }
@@ -394,10 +404,11 @@
   function openLink(url) {
     if (tg && tg.openLink && url.indexOf("http") === 0) tg.openLink(url);
     else if (url.indexOf("http") === 0) window.open(url, "_blank", "noopener");
-    else window.location.href = url;
+    else if (/^(mailto|tel):/.test(url)) window.location.href = url;
+    else window.open(url, "_blank", "noopener"); // a page next to the app (privacy.html): new tab, keeps the visitor's progress
   }
   function euro(n) {
-    return new Intl.NumberFormat(S.lang === "nl" ? "nl-NL" : "en-GB", { style: "currency", currency: S.data.pricing.currency, maximumFractionDigits: 0 }).format(n);
+    return new Intl.NumberFormat(S.lang === "nl" ? "nl-NL" : "en-GB", { style: "currency", currency: (S.pricing && S.pricing.currency) || "EUR", maximumFractionDigits: 0 }).format(n);
   }
   function fmtMeters(v) {
     var n = Number(v);
@@ -475,22 +486,12 @@
     }
     return null;
   }
+  // The formula lives in pricing.js and the numbers in pricing.json (sell prices incl. BTW only).
+  // The style is a label for the result page; it does not set the price.
   function computeBudget() {
     if (!lengthKnown()) return null;
-    var p = S.data.pricing, a = S.answers, style = computeStyleId();
-    var total = p.perMeter[style] * Number(a.meters);
-    total *= p.shape[a.shape];
-    total *= p.island[a.island];
-    total *= (p.fronts[a.front_shape] && p.fronts[a.front_shape][a.front_material]) || 1;
-    ["worktop", "hardware", "sink", "tap"].forEach(function (k) {
-      total += p.adders[k][a[k]] || 0;
-    });
-    if (a.appliance_path && a.appliance_path !== "own") {
-      var tierAdders = p.adders.appliances[a.appliance_path];
-      total += (tierAdders && tierAdders[a.appliance_tier]) || 0;
-    }
-    total = Math.floor(total / p.roundTo) * p.roundTo;
-    return Math.max(total, p.minimumFrom);
+    var r = window.AurumPricing.compute(S.pricing, S.answers);
+    return r ? r.total : null;
   }
   function isGroupVisible(g) {
     if (!g.visibleWhen) return true;
@@ -850,6 +851,12 @@
     // AVG: contacting someone about their own request needs no consent tick (art. 6(1)(b)).
     // News/marketing does: separate, optional, never pre-ticked. Leave g.marketing empty to hide it.
     var marketing = el("input", { type: "checkbox", id: "f-marketing" });
+
+    // Anti-spam, invisible to people: a field only bots fill in, and the time the form was on screen.
+    // The lead script drops a submission with the field filled or sent within a few seconds.
+    var shownAt = Date.now();
+    var honeypot = el("input", { type: "text", id: "f-website", name: "website", tabindex: "-1", autocomplete: "off" });
+    var honeypotWrap = el("div", { class: "hp", "aria-hidden": "true" }, [el("label", { for: "f-website", text: "Website" }), honeypot]);
     var submit = el("button", {
       class: "btn", type: "button", text: unsure ? (g.buttonUnsure || g.button) : g.button,
       onclick: function () {
@@ -885,7 +892,8 @@
           priorityFollowUp: !!(stageOpt && stageOpt.flagFollowUp),
           clientType: (stageOpt && stageOpt.clientType) || "homeowner",
           timing: timingSelect ? timingSelect.value : "",
-          answers: JSON.parse(JSON.stringify(S.answers)), createdAt: new Date().toISOString()
+          answers: JSON.parse(JSON.stringify(S.answers)), createdAt: new Date().toISOString(),
+          hp: honeypot.value, ms: Date.now() - shownAt
         };
         submitLead(S.lead);
         track(pad2(t().questions.length + 2) + " lead sent");
@@ -895,6 +903,7 @@
       }
     });
 
+    form.appendChild(honeypotWrap);
     form.appendChild(field("name", "text", "name"));
     form.appendChild(field("email", "email", "email"));
     form.appendChild(phoneField);
@@ -936,7 +945,7 @@
       class: "linkbtn privacy-link", type: "button", text: p.linkLabel || "Privacy",
       "aria-expanded": "false",
       onclick: function () {
-        if (url) { openLink(url); return; }
+        if (url) { openLink(url + (url.indexOf("#") === -1 ? "#" + S.lang : "")); return; }
         details.hidden = !details.hidden;
         link.setAttribute("aria-expanded", details.hidden ? "false" : "true");
       }
@@ -994,12 +1003,20 @@
         el("span", { class: "num", text: euro(computeBudget()) })
       ]) : null,
       el("p", { class: "caption", text: known ? caption : b.unsureText }),
-      known && S.data.pricing.placeholder ? el("p", { class: "protonote", text: d.ui.prototypeNote }) : null,
+      known && S.pricing.placeholder ? el("p", { class: "protonote", text: d.ui.prototypeNote }) : null,
       el("div", { style: "margin-top:32px" }, [
         el("h3", { text: b.includedTitle, style: "font-size:21px" }),
-        el("ul", { class: "list" }, b.included.map(function (t) { return el("li", { text: t }); })),
-        el("div", { class: "notes" }, b.notes.map(function (t) { return el("p", { text: t }); }))
+        el("ul", { class: "list" }, b.included.map(function (t) { return el("li", { text: t }); }))
       ]),
+      b.excluded ? el("div", { style: "margin-top:28px" }, [
+        el("h3", { text: b.excludedTitle, style: "font-size:21px" }),
+        el("ul", { class: "list" }, b.excluded.map(function (t) { return el("li", { text: t }); }))
+      ]) : null,
+      b.moves ? el("div", { style: "margin-top:28px" }, [
+        el("h3", { text: b.movesTitle, style: "font-size:21px" }),
+        el("ul", { class: "list" }, b.moves.map(function (t) { return el("li", { text: t }); }))
+      ]) : null,
+      el("div", { class: "notes" }, b.notes.map(function (t) { return el("p", { text: t }); })),
       el("div", { style: "margin-top:34px" }, [
         el("h3", { text: b.ctaTitle, style: "margin-bottom:10px" }),
         b.ctaText ? el("p", { class: "cta-text", text: b.ctaText }) : null,
@@ -1042,29 +1059,14 @@
       "Marketing opt-in": lead.marketingOptIn ? "Yes" : "No",
       "Source": SOURCE.source, "Campaign": SOURCE.campaign,
       "Status": "New", "Notes": "",
-      // Keys starting with "_" are not written to the sheet; the script uses this for the client's email.
-      "_email": emailData(lead)
-    };
-  }
-  // What the confirmation email needs, in the language the client used.
-  function emailData(lead) {
-    var d = t(), e = d.email || {};
-    var style = d.styles[lead.style];
-    return {
-      lang: S.lang,
-      to: lead.email,
-      name: lead.name,
-      subject: (e.subject || "").replace("{style}", style ? style.name : ""),
-      style: style ? style.name : "",
-      styleId: lead.style || "",
-      imageCaption: d.result.imageCaption || "",
-      styleDescription: style ? style.description : "",
-      budgetKnown: lead.budgetFrom !== null,
-      budget: lead.budgetFrom !== null ? d.budget.prefix + " " + euro(lead.budgetFrom) : "",
-      choices: d.questions.map(function (q) { return [q.summary, summaryValue(q)]; }),
-      phone: S.data.contact.phoneDisplay || "",
-      whatsapp: "https://wa.me/" + S.data.contact.whatsapp,
-      text: e
+      // Keys starting with "_" are not written to the sheet. The script writes the client's confirmation email
+      // itself, from the published data.json: only these ids and numbers come from the browser, never email text.
+      "_lang": S.lang,
+      "_style": lead.style || "",
+      "_answers": lead.answers,
+      "_budget": lead.budgetFrom,
+      "_hp": lead.hp,
+      "_ms": lead.ms
     };
   }
   // Anonymous funnel counting: which screens people reach. No name, email or stored id;
@@ -1119,10 +1121,15 @@
   }
 
   function load() {
-    fetch("data.json?v=" + Date.now(), { cache: "no-store" })
-      .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
-      .then(function (d) {
-        S.data = d; S.lang = detectLang(); setLang(S.lang); initAnswers(); S.screen = "home";
+    function getJson(name) {
+      return fetch(name + "?v=" + Date.now(), { cache: "no-store" })
+        .then(function (r) { if (!r.ok) throw new Error(name + ": HTTP " + r.status); return r.json(); });
+    }
+    Promise.all([getJson("data.json"), getJson("pricing.json")])
+      .then(function (res) {
+        if (!window.AurumPricing) throw new Error("pricing.js did not load");
+        var d = res[0];
+        S.data = d; S.pricing = res[1]; S.lang = detectLang(); setLang(S.lang); initAnswers(); S.screen = "home";
         restoreProgress(); // resume where the client left off, if they closed the app mid-way
         render();
       })

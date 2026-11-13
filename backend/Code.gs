@@ -8,34 +8,54 @@
  *  3. Anna gets a short notification email for every lead.
  *  4. The client gets a confirmation email with their choices and starting budget, in their language.
  *
- * Setup: Extensions > Apps Script, paste this file into Code.gs. The email logo and style
- * photos are read from Drive (see EMAIL_IMAGE_IDS). Save. Deploy > New deployment > Web app,
- * Execute as: Me, Who has access: Anyone. Copy the web app URL into data.json -> contact.leadEndpoint.
- * After changing this code: Deploy > Manage deployments > edit > Version: New version (the URL stays the same).
+ * Spam protection (v0.4). This endpoint is public, so anyone can POST to it. Therefore:
+ *  - The client email is written HERE, from the published data.json (SITE_DATA_URL). The browser only sends
+ *    answer ids, a style id and a number; never a subject, a text or a recipient other than the lead's own address.
+ *    Nobody can use this script to send their own text from the Aurum account.
+ *  - A hidden field that only bots fill in, and a minimum time on the form, drop automated submissions silently.
+ *  - At most one confirmation per email address per 6 hours, and at most MAX_CLIENT_EMAILS_PER_DAY in total.
+ *  - A name that looks like a link is left out of the greeting.
+ *
+ * Setup: Extensions > Apps Script, paste this file into Code.gs. Project Settings > Script properties:
+ *   TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_IDS   (optional; never put the token in this file or in git)
+ * Set SITE_DATA_URL below to the live data.json. Save. Deploy > Manage deployments > edit > Version: New version
+ * (the URL stays the same, so data.json -> contact.leadEndpoint does not change).
+ * Until SITE_DATA_URL is set, leads are still saved and Anna is notified, but no client email is sent.
  */
 
-var NOTIFY_EMAIL = "anna@auruminteriors.nl";   // Gets a message for every new lead. "" switches it off.
-var SEND_CLIENT_EMAIL = true;                  // Confirmation email to the client. false switches it off.
-var REPLY_TO = "anna@auruminteriors.nl";       // Where the client's reply lands.
+var SITE_DATA_URL = "";                         // e.g. "https://configurator.auruminteriors.nl/data.json"
+var NOTIFY_EMAIL = "anna@auruminteriors.nl";    // Gets a message for every new lead. "" switches it off.
+var SEND_CLIENT_EMAIL = true;                   // Confirmation email to the client. false switches it off.
+var REPLY_TO = "anna@auruminteriors.nl";        // Where the client's reply lands.
 var SENDER_NAME = "Aurum Premium Interiors";
+var MAX_CLIENT_EMAILS_PER_DAY = 40;             // Hard cap on confirmations per day, whatever happens.
+var MIN_FILL_MS = 3000;                         // A person needs longer than this to fill in the form.
+var MAX_BODY = 20000;                           // Characters; a real lead is about 3,000.
 
-// Telegram push for every new lead. Fill in both, or leave "" to switch it off.
+// Telegram push for every new lead, from Script properties (see Setup). Empty switches it off.
 // TELEGRAM_CHAT_IDS can hold several ids (Anna, Mathieu, a group), separated by commas.
-// Setup: create the bot with @BotFather, paste its token below, send the bot any message,
+// Setup: create the bot with @BotFather, put its token in the script properties, send the bot any message,
 // then run telegramFindChatId once (select it at the top, press Run) and copy the id from the log.
-var TELEGRAM_BOT_TOKEN = "";
-var TELEGRAM_CHAT_IDS = "";
+// Switching Telegram on means lead details go to Telegram too: add that to the privacy statement first.
+function prop_(name) { return PropertiesService.getScriptProperties().getProperty(name) || ""; }
 
 function doGet() {
   return ContentService.createTextOutput("Aurum configurator endpoint is running.");
 }
 
 function doPost(e) {
+  var raw = (e && e.postData && e.postData.contents) || "";
+  if (raw.length > MAX_BODY) return json_({ ok: false });
   var lock = LockService.getScriptLock();
   lock.waitLock(10000);
   try {
-    var data = JSON.parse(e.postData.contents);
+    var data = JSON.parse(raw);
     if (data._type === "event") { logEvent_(data); return json_({ ok: true }); }
+
+    // Bots: answer "ok" so they learn nothing, but keep nothing.
+    if (data._hp) return json_({ ok: true });
+    if (typeof data._ms === "number" && data._ms < MIN_FILL_MS) return json_({ ok: true });
+    if (!isValidEmail_(data["Email"])) return json_({ ok: true });
 
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var sheet = ss.getSheets()[0];
@@ -47,26 +67,61 @@ function doPost(e) {
     var row = headers.map(function (h) {
       var v = data[h];
       if (v === undefined || v === null) return "";
-      if (typeof v === "string" && /^[=+\-@]/.test(v)) return "'" + v; // "+31 6..." must stay text
+      if (typeof v === "object") v = JSON.stringify(v);
+      if (typeof v === "string") {
+        v = v.slice(0, 500);
+        if (/^[=+\-@]/.test(v)) return "'" + v; // "+31 6..." must stay text, and no formulas from outside
+      }
       return v;
     });
     sheet.appendRow(row);
 
     // The row is saved first. Each message below runs on its own, so one failing never stops the others.
-    try { if (TELEGRAM_BOT_TOKEN && TELEGRAM_CHAT_IDS) notifyTelegram_(data, ss.getUrl()); } catch (t) { console.error("Telegram: " + t); }
+    try { if (prop_("TELEGRAM_BOT_TOKEN") && prop_("TELEGRAM_CHAT_IDS")) notifyTelegram_(data, ss.getUrl()); } catch (t) { console.error("Telegram: " + t); }
     try { if (NOTIFY_EMAIL) notifyAnna_(data, ss.getUrl()); } catch (m) { console.error("Notify email: " + m); }
-    try { if (SEND_CLIENT_EMAIL && data._email && data._email.to) sendClientEmail_(data._email); } catch (c) { console.error("Client email: " + c); }
+    try { if (SEND_CLIENT_EMAIL) sendClientEmail_(data); } catch (c) { console.error("Client email: " + c); }
 
     return json_({ ok: true });
   } catch (err) {
-    return json_({ ok: false, error: String(err) });
+    return json_({ ok: false });
   } finally {
     lock.releaseLock();
   }
 }
 
+/* ---------- checks ---------- */
+function isValidEmail_(v) {
+  return typeof v === "string" && v.length <= 120 && /^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$/.test(v);
+}
+// A name is greeted only if it looks like a name: no links, no addresses, no markup, not too long.
+function cleanName_(v) {
+  var s = String(v || "").replace(/\s+/g, " ").trim();
+  if (s.length < 2 || s.length > 60) return "";
+  if (/https?:|www\.|@|<|>|\/\/|\.[a-z]{2,}(\/|\b)/i.test(s)) return "";
+  return s;
+}
+// The budget can only be a round figure in a sensible range; anything else is shown as "not known".
+function cleanBudget_(v) {
+  return typeof v === "number" && isFinite(v) && v >= 5000 && v <= 2000000 && v % 100 === 0 ? v : null;
+}
+// One confirmation per address per 6 hours, and a daily cap overall.
+function allowClientEmail_(address) {
+  var cache = CacheService.getScriptCache();
+  var key = "sent:" + address.toLowerCase();
+  if (cache.get(key)) return false;
+  var props = PropertiesService.getScriptProperties();
+  var dayKey = "mailcount:" + Utilities.formatDate(new Date(), "Europe/Amsterdam", "yyyy-MM-dd");
+  var count = Number(props.getProperty(dayKey) || 0);
+  if (count >= MAX_CLIENT_EMAILS_PER_DAY) return false;
+  props.setProperty(dayKey, String(count + 1));
+  cache.put(key, "1", 21600);
+  return true;
+}
+
 /* ---------- funnel ---------- */
 function logEvent_(d) {
+  var event = String(d.event || "");
+  if (!/^\d{2} [a-z0-9_ ]{1,40}$/i.test(event)) return; // only the configurator's own step names
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sh = ss.getSheetByName("Funnel");
   if (!sh) {
@@ -74,7 +129,8 @@ function logEvent_(d) {
     sh.appendRow(["At", "Session", "Step", "Language", "Source"]);
     sh.setFrozenRows(1);
   }
-  sh.appendRow([d.at || new Date().toISOString(), d.session || "", d.event || "", d.lang || "", d.source || ""]);
+  var clip = function (v, n) { v = String(v || "").slice(0, n); return /^[=+\-@]/.test(v) ? "'" + v : v; };
+  sh.appendRow([new Date().toISOString(), clip(d.session, 12), event, clip(d.lang, 5), clip(d.source, 60)]);
   if (!ss.getSheetByName("Funnel summary")) {
     var sum = ss.insertSheet("Funnel summary");
     sum.getRange("A1").setValue("Visitors per step (each visit counted once per step)");
@@ -101,10 +157,11 @@ function notifyTelegram_(data, sheetUrl) {
     "",
     sheetUrl
   ];
-  TELEGRAM_CHAT_IDS.split(",").forEach(function (id) {
+  var token = prop_("TELEGRAM_BOT_TOKEN");
+  prop_("TELEGRAM_CHAT_IDS").split(",").forEach(function (id) {
     id = id.trim();
     if (!id) return;
-    UrlFetchApp.fetch("https://api.telegram.org/bot" + TELEGRAM_BOT_TOKEN + "/sendMessage", {
+    UrlFetchApp.fetch("https://api.telegram.org/bot" + token + "/sendMessage", {
       method: "post",
       payload: { chat_id: id, text: lines.join("\n"), disable_web_page_preview: "true" },
       muteHttpExceptions: true
@@ -114,7 +171,7 @@ function notifyTelegram_(data, sheetUrl) {
 
 // Run once by hand after sending your bot a message: it writes the chat id of everyone who wrote to it to the log.
 function telegramFindChatId() {
-  var r = UrlFetchApp.fetch("https://api.telegram.org/bot" + TELEGRAM_BOT_TOKEN + "/getUpdates", { muteHttpExceptions: true });
+  var r = UrlFetchApp.fetch("https://api.telegram.org/bot" + prop_("TELEGRAM_BOT_TOKEN") + "/getUpdates", { muteHttpExceptions: true });
   var res = JSON.parse(r.getContentText());
   if (!res.ok) { console.log("Token not accepted: " + r.getContentText()); return; }
   var seen = {};
@@ -138,34 +195,106 @@ function notifyAnna_(data, sheetUrl) {
   if (data["Client type"] && data["Client type"] !== "Homeowner") flags.push(data["Client type"]);
   if (data["Priority follow-up"] === "Yes") flags.push("priority");
   if (data["Timing"] && data["Timing"] !== "Not given") flags.push(data["Timing"]);
+  var clip = function (v) { return String(v || "").slice(0, 200); };
   MailApp.sendEmail({
     to: NOTIFY_EMAIL,
-    subject: "New configurator lead: " + (data["Name"] || "") + (flags.length ? " (" + flags.join(", ") + ")" : ""),
+    subject: "New configurator lead: " + clip(data["Name"]).slice(0, 60) + (flags.length ? " (" + flags.join(", ") + ")" : ""),
     body: [
-      "Name: " + (data["Name"] || ""),
-      "Email: " + (data["Email"] || ""),
-      "Phone: " + (data["Phone"] || ""),
-      "Client type: " + (data["Client type"] || ""),
-      "Timing: " + (data["Timing"] || ""),
-      "Location: " + (data["Location"] || ""),
-      "Style: " + (data["Style"] || ""),
-      "Length: " + (data["Length (m)"] || ""),
-      "Starting budget: " + (data["Starting budget (EUR)"] || ""),
-      "Source: " + (data["Source"] || "") + (data["Campaign"] ? " / " + data["Campaign"] : ""),
+      "Name: " + clip(data["Name"]),
+      "Email: " + clip(data["Email"]),
+      "Phone: " + clip(data["Phone"]),
+      "Client type: " + clip(data["Client type"]),
+      "Timing: " + clip(data["Timing"]),
+      "Location: " + clip(data["Location"]),
+      "Style: " + clip(data["Style"]),
+      "Length: " + clip(data["Length (m)"]),
+      "Starting budget: " + clip(data["Starting budget (EUR)"]),
+      "Source: " + clip(data["Source"]) + (data["Campaign"] ? " / " + clip(data["Campaign"]) : ""),
       "",
       sheetUrl
     ].join("\n")
   });
 }
 
-function sendClientEmail_(m) {
-  var html = buildClientEmail_(m);
-  var plain = buildClientText_(m);
+// The published data.json: texts, questions, styles and contact details. Cached for an hour.
+function siteData_() {
+  if (!SITE_DATA_URL) return null;
+  var cache = CacheService.getScriptCache();
+  var hit = cache.get("sitedata");
+  if (hit) return JSON.parse(hit);
+  var r = UrlFetchApp.fetch(SITE_DATA_URL + "?v=" + Date.now(), { muteHttpExceptions: true });
+  if (r.getResponseCode() !== 200) { console.error("data.json: HTTP " + r.getResponseCode()); return null; }
+  var text = r.getContentText();
+  try { cache.put("sitedata", text, 3600); } catch (e) { /* larger than the cache limit: fetch each time */ }
+  return JSON.parse(text);
+}
+
+function euro_(n, lang) {
+  var s = String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, lang === "nl" ? "." : ",");
+  return lang === "nl" ? "€ " + s : "€" + s;
+}
+
+// The client's choices as [question, answer] rows, rebuilt from the answer ids with the site's own labels.
+// An id that is not in data.json is simply left out, so no free text from the browser reaches the email.
+function choiceRows_(c, answers) {
+  answers = answers && typeof answers === "object" ? answers : {};
+  var label = function (groupId, optionId) {
+    var out = "";
+    c.questions.forEach(function (q) { q.groups.forEach(function (g) {
+      if (g.id === groupId && g.options) g.options.forEach(function (o) { if (o.id === optionId) out = o.label; });
+    }); });
+    return out;
+  };
+  return c.questions.map(function (q) {
+    var parts = [];
+    q.groups.forEach(function (g) {
+      if (g.type === "number") {
+        if (answers[g.id + "_unknown"] === true) { parts.push(g.unsureSummary || "—"); return; }
+        var n = Number(answers[g.id]);
+        if (isFinite(n) && n >= g.min && n <= g.max) parts.push(String(Math.round(n * 10) / 10).replace(".", ",") + " " + g.unit);
+      } else {
+        var l = label(g.id, String(answers[g.id] || ""));
+        if (l) parts.push(l);
+      }
+    });
+    return [q.summary, parts.join(", ")];
+  });
+}
+
+function sendClientEmail_(data) {
+  var to = data["Email"];
+  var site = siteData_();
+  if (!site) { console.warn("Client email not sent: SITE_DATA_URL is empty or data.json did not load."); return; }
+  var lang = site.content[data._lang] ? data._lang : (site.defaultLang || "en");
+  var c = site.content[lang];
+  if (!c || !c.email) return;
+  if (!allowClientEmail_(to)) { console.warn("Client email not sent: throttled for this address or daily cap reached."); return; }
+
+  var style = c.styles[data._style] || null;
+  var budget = cleanBudget_(data._budget);
+  var name = cleanName_(data["Name"]);
+  var e = c.email;
+  var m = {
+    lang: lang,
+    to: to,
+    name: name,
+    subject: (e.subject || "").replace("{style}", style ? style.name : "").replace(/:\s*$/, ""),
+    style: style ? style.name : "",
+    styleId: style ? data._style : "",
+    imageCaption: (c.result && c.result.imageCaption) || "",
+    styleDescription: style ? style.description : "",
+    budgetKnown: budget !== null,
+    budget: budget !== null ? c.budget.prefix + " " + euro_(budget, lang) : "",
+    choices: choiceRows_(c, data._answers),
+    phone: (site.contact && site.contact.phoneDisplay) || "",
+    whatsapp: "https://wa.me/" + ((site.contact && site.contact.whatsapp) || ""),
+    text: e
+  };
   MailApp.sendEmail({
-    to: m.to,
+    to: to,
     subject: m.subject,
-    body: plain,
-    htmlBody: html,
+    body: buildClientText_(m),
+    htmlBody: buildClientEmail_(m),
     name: SENDER_NAME,
     replyTo: REPLY_TO,
     inlineImages: inlineImages_(m)
@@ -196,16 +325,20 @@ function inlineImages_(m) {
   return imgs;
 }
 function hasStylePhoto_(m) {
-  return !!(m.styleId && EMAIL_IMAGE_IDS[m.styleId]);
+  return !!(m.styleId && EMAIL_IMAGE_IDS.hasOwnProperty(m.styleId) && m.styleId !== "logo");
 }
 function esc_(s) {
   return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+// "Hello {name}," without a usable name becomes "Hello,".
+function greeting_(t, name) {
+  return name ? t.greeting.replace("{name}", name) : t.greeting.replace(/\s*\{name\}/, "");
 }
 
 function buildClientText_(m) {
   var t = m.text;
   var lines = [
-    t.greeting.replace("{name}", m.name), "",
+    greeting_(t, m.name), "",
     t.intro, "",
     t.styleLabel + ": " + m.style,
     t.budgetLabel + ": " + (m.budgetKnown ? m.budget : t.budgetUnknown),
@@ -266,7 +399,7 @@ function buildClientEmail_(m) {
           '</td></tr>'
         : '') +
       '<tr><td style="padding:0 48px;">' +
-        p(esc_(t.greeting.replace("{name}", m.name))) + p(esc_(t.intro)) +
+        p(esc_(greeting_(t, m.name))) + p(esc_(t.intro)) +
         (m.styleDescription ? '<p style="font-family:' + SERIF + ';font-style:italic;font-size:18px;line-height:1.5;color:' + NAVY + ';margin:6px 0 0 0;">' + esc_(m.styleDescription) + '</p>' : '') +
       '</td></tr>' +
       section(label(t.budgetLabel) + budgetHtml) +
@@ -288,5 +421,3 @@ function buildClientEmail_(m) {
 function json_(o) {
   return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON);
 }
-
-// Navy Aurum logo for the email header (PNG, base64).

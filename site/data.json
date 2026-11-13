@@ -1,7 +1,7 @@
 {
   "meta": {
     "brand": "Aurum Premium Interiors",
-    "version": "0.3-prototype",
+    "version": "0.4",
     "logo": "images/aurum-logo.png"
   },
   "appName": {
@@ -551,13 +551,14 @@
         "marketing": "Keep me posted about Aurum projects and news. Optional, you can unsubscribe at any time.",
         "privacy": {
           "short": "We use your details only to respond to your kitchen request.",
-          "linkLabel": "How we handle your data",
+          "linkLabel": "Privacy statement",
           "details": [
-            "Aurum Premium Interiors, Oudelandsdijkje 4, 1141 PH Monnickendam, is responsible for your data. Questions: {email}.",
-            "We collect your name, email address, your phone number if you give it, and the answers in this configurator.",
+            "Aurum Premium Interiors, a trade name of Mathieu Design & Construction B.V. (KvK 97666599), Oudelandsdijkje 4, 1141 PH Monnickendam, is responsible for your data. Questions: {email}.",
+            "We collect your name, email address, your phone number if you give it, the answers in this configurator, and where you came from (for example the advert or website that linked here).",
             "We use them to answer your kitchen request and prepare a starting budget or quote. This is a step you asked for before a possible agreement (AVG article 6(1)(b)), so no separate permission is needed. If you tick the news box, we also use your email address for that, based on your permission, which you can withdraw at any time.",
             "To improve the configurator we count anonymously how far visitors get. That count holds no name, email or other personal details.",
-            "Only Aurum sees your details. They are stored in Google Sheets, which Google processes on our behalf. We do not sell or share them.",
+            "Your progress is kept in your own browser for 14 days so you can pick up where you left off. We use no cookies.",
+            "Only Aurum sees your details. They are stored in Google Workspace (Google Sheets and Gmail), which Google processes on our behalf, possibly outside the EU under the EU standard contractual clauses. We do not sell or share them.",
             "We keep your details for up to 24 months after our last contact, unless a project follows.",
             "You can ask to see, correct or delete your details, object to their use, or receive a copy, by emailing {email}. You can also file a complaint with the Autoriteit Persoonsgegevens."
           ]
@@ -588,17 +589,17 @@
       "budget": {
         "title": "Your starting budget",
         "prefix": "from",
-        "caption": "A starting figure for a {style} kitchen with {meters} m of cabinets. It is not a quote.",
-        "includedTitle": "Included in every Aurum kitchen",
+        "caption": "A starting figure for a {style} kitchen with {meters} m of cabinets, including 21% VAT. It is a lower limit, not a quote.",
+        "includedTitle": "Included",
         "included": [
-          "Plywood cabinet boxes",
-          "Kitchen design",
-          "Fitting the cabinets",
-          "Measuring and installing the worktop"
+          "Design, engineering and workshop drawings",
+          "Plywood cabinets, made in our own workshop in Monnickendam",
+          "Delivery and installation",
+          "Measuring, supplying and fitting the worktop",
+          "The sink, tap and appliances you chose, unless you have your own"
         ],
         "notes": [
-          "The figure includes the worktop, sink and tap you chose, and the appliances unless you have your own.",
-          "The final quote depends on site conditions: plumbing, electrical, gas, ventilation, removal of the old kitchen and access to the room.",
+          "Working out your design between this figure and the quote costs €1,500. If you go ahead, it is deducted from the deposit.",
           "A 3D visualisation is an optional extra."
         ],
         "ctaTitle": "Discuss your kitchen with us",
@@ -611,7 +612,22 @@
         "unsureText": "We need the length of your kitchen to calculate a starting budget. We will contact you to work it out together. You can also measure the wall yourself and run the configurator again for an instant figure.",
         "budgetUnknown": "length still to be measured",
         "ctaText": "Send us a message to talk through your choices or to plan a call with Aurum.",
-        "whatsappTextDesigner": "Hello Aurum, this is {name}. I'm an interior designer and used the kitchen configurator for a client ({style}, {budgetPart}). I'd like to discuss the project."
+        "whatsappTextDesigner": "Hello Aurum, this is {name}. I'm an interior designer and used the kitchen configurator for a client ({style}, {budgetPart}). I'd like to discuss the project.",
+        "excludedTitle": "Not included",
+        "excluded": [
+          "Removing and disposing of the old kitchen",
+          "Moving water, drain or electrical connections",
+          "Tiling, plastering and painting",
+          "Floor finishing"
+        ],
+        "movesTitle": "What moves the price",
+        "moves": [
+          "The final dimensions, once we have measured on site",
+          "The number of drawers, tall cabinets and panels",
+          "The brand and model of each appliance",
+          "The worktop material, its thickness and the number of joins",
+          "Handles, push-to-open or electric opening"
+        ]
       },
       "email": {
         "subject": "Your kitchen direction: {style}",
@@ -621,7 +637,7 @@
         "intro": "Thank you for using our kitchen configurator. Here are your choices and your starting budget, so you have them in one place.",
         "styleLabel": "Your kitchen direction",
         "budgetLabel": "Starting budget",
-        "budgetNote": "A starting figure, not a quote. The final price depends on the details we work out together and on the situation on site.",
+        "budgetNote": "A starting figure including 21% VAT: a lower limit, not a quote. The final price depends on the details we work out together and on the situation on site.",
         "budgetUnknown": "We need the length of your kitchen to calculate a starting budget. We will work it out with you.",
         "choicesLabel": "Your choices",
         "nextLabel": "What happens next",
@@ -1164,13 +1180,14 @@
         "marketing": "Houd me op de hoogte van projecten en nieuws van Aurum. Optioneel, je kunt je altijd afmelden.",
         "privacy": {
           "short": "We gebruiken je gegevens alleen om je keukenaanvraag te beantwoorden.",
-          "linkLabel": "Zo gaan we met je gegevens om",
+          "linkLabel": "Privacyverklaring",
           "details": [
-            "Aurum Premium Interiors, Oudelandsdijkje 4, 1141 PH Monnickendam, is verantwoordelijk voor je gegevens. Vragen: {email}.",
-            "We verzamelen je naam, e-mailadres, je telefoonnummer als je dat invult, en de antwoorden in deze keukenplanner.",
+            "Aurum Premium Interiors, een handelsnaam van Mathieu Design & Construction B.V. (KvK 97666599), Oudelandsdijkje 4, 1141 PH Monnickendam, is verantwoordelijk voor je gegevens. Vragen: {email}.",
+            "We verzamelen je naam, e-mailadres, je telefoonnummer als je dat invult, de antwoorden in deze keukenplanner, en waar je vandaan kwam (bijvoorbeeld de advertentie of website die hierheen linkte).",
             "We gebruiken ze om je keukenaanvraag te beantwoorden en een startbudget of offerte voor te bereiden. Dat is een stap waar je zelf om vraagt vóór een mogelijke overeenkomst (AVG artikel 6 lid 1 sub b), dus aparte toestemming is niet nodig. Vink je het nieuwsvakje aan, dan gebruiken we je e-mailadres ook daarvoor, op basis van je toestemming. Die kun je altijd intrekken.",
             "Om de keukenplanner te verbeteren tellen we anoniem hoe ver bezoekers komen. Daarbij slaan we geen naam, e-mail of andere persoonsgegevens op.",
-            "Alleen Aurum ziet je gegevens. Ze worden opgeslagen in Google Sheets, dat Google namens ons verwerkt. We verkopen of delen ze niet.",
+            "Je voortgang wordt 14 dagen in je eigen browser bewaard, zodat je later verder kunt. We gebruiken geen cookies.",
+            "Alleen Aurum ziet je gegevens. Ze worden opgeslagen in Google Workspace (Google Sheets en Gmail), dat Google namens ons verwerkt, mogelijk buiten de EU op basis van de EU-modelcontractbepalingen. We verkopen of delen ze niet.",
             "We bewaren je gegevens tot 24 maanden na ons laatste contact, tenzij er een project uit voortkomt.",
             "Je kunt je gegevens inzien, laten corrigeren of verwijderen, bezwaar maken tegen het gebruik, of een kopie opvragen via {email}. Je kunt ook een klacht indienen bij de Autoriteit Persoonsgegevens."
           ]
@@ -1201,17 +1218,17 @@
       "budget": {
         "title": "Jouw startbudget",
         "prefix": "vanaf",
-        "caption": "Een startcijfer voor een keuken in de stijl {style} met {meters} m kasten. Dit is geen offerte.",
-        "includedTitle": "Inbegrepen bij elke Aurum-keuken",
+        "caption": "Een startcijfer voor een keuken in de stijl {style} met {meters} m kasten, inclusief 21% btw. Het is een ondergrens, geen offerte.",
+        "includedTitle": "Inbegrepen",
         "included": [
-          "Kasten van multiplex",
-          "Keukenontwerp",
-          "Montage van de kasten",
-          "Opmeten en plaatsen van het werkblad"
+          "Ontwerp, engineering en werktekeningen",
+          "Kasten van multiplex, gemaakt in onze eigen werkplaats in Monnickendam",
+          "Levering en montage",
+          "Inmeten, leveren en monteren van het werkblad",
+          "De spoelbak, kraan en apparatuur die je koos, tenzij je die zelf hebt"
         ],
         "notes": [
-          "Het bedrag is inclusief het werkblad, de spoelbak en de kraan die je koos, en de apparatuur tenzij je die zelf hebt.",
-          "De uiteindelijke offerte is afhankelijk van de situatie ter plaatse: leidingwerk, elektra, gas, ventilatie, verwijderen van de oude keuken en toegankelijkheid van de ruimte.",
+          "Het uitwerken van je ontwerp tussen dit bedrag en de offerte kost € 1.500. Gaat de opdracht door, dan verrekenen we dat met de aanbetaling.",
           "Een 3D-visualisatie is een optionele toevoeging."
         ],
         "ctaTitle": "Bespreek je keuken met ons",
@@ -1224,7 +1241,22 @@
         "unsureText": "We hebben de lengte van je keuken nodig om een startbudget te berekenen. We nemen contact met je op om die samen te bepalen. Je kunt de wand ook zelf opmeten en de keukenplanner opnieuw invullen voor direct een bedrag.",
         "budgetUnknown": "lengte nog op te meten",
         "ctaText": "Stuur ons een bericht om je keuzes door te nemen of een belafspraak met Aurum te plannen.",
-        "whatsappTextDesigner": "Hallo Aurum, met {name}. Ik ben interieurontwerper en heb de keukenplanner voor een klant ingevuld ({style}, {budgetPart}). Ik bespreek het project graag."
+        "whatsappTextDesigner": "Hallo Aurum, met {name}. Ik ben interieurontwerper en heb de keukenplanner voor een klant ingevuld ({style}, {budgetPart}). Ik bespreek het project graag.",
+        "excludedTitle": "Niet inbegrepen",
+        "excluded": [
+          "Verwijderen en afvoeren van de oude keuken",
+          "Verplaatsen van water-, afvoer- of elektra-aansluitingen",
+          "Tegel-, stuc- en schilderwerk",
+          "Vloerafwerking"
+        ],
+        "movesTitle": "Wat de prijs beïnvloedt",
+        "moves": [
+          "De definitieve maten, nadat we op locatie hebben ingemeten",
+          "Het aantal laden, hoge kasten en panelen",
+          "Merk en type van elk apparaat",
+          "Het werkbladmateriaal, de dikte en het aantal naden",
+          "Grepen, push-to-open of elektrisch openen"
+        ]
       },
       "email": {
         "subject": "Jouw keukenrichting: {style}",
@@ -1234,7 +1266,7 @@
         "intro": "Bedankt voor het invullen van onze keukenplanner. Hieronder staan je keuzes en je startbudget, zodat je alles bij elkaar hebt.",
         "styleLabel": "Jouw keukenrichting",
         "budgetLabel": "Startbudget",
-        "budgetNote": "Een startcijfer, geen offerte. De uiteindelijke prijs hangt af van de details die we samen uitwerken en van de situatie ter plaatse.",
+        "budgetNote": "Een startcijfer inclusief 21% btw: een ondergrens, geen offerte. De uiteindelijke prijs hangt af van wat we samen uitwerken en van de situatie ter plaatse.",
         "budgetUnknown": "We hebben de lengte van je keuken nodig om een startbudget te berekenen. Die bepalen we samen met je.",
         "choicesLabel": "Jouw keuzes",
         "nextLabel": "Hoe nu verder",
@@ -1251,78 +1283,7 @@
     "whatsapp": "31657181596",
     "email": "Mathieu@auruminteriors.nl",
     "leadEndpoint": "https://script.google.com/macros/s/AKfycbyFHUMFN66QAuB7kHL60DMlmZ3HwGC-sPStVA6wpuT1DibkQltE4Hbw5kEDClU3gpaQmg/exec",
-    "privacyUrl": "",
+    "privacyUrl": "privacy.html",
     "phoneDisplay": "+31 6 57181596"
-  },
-  "pricing": {
-    "placeholder": false,
-    "note": "Prices from Mathieu's pricing worksheet (Pricing Inputs, column D, 12-10-2026), incl. 21% BTW. Specialty worktop (concrete, stainless steel) is still a placeholder.",
-    "currency": "EUR",
-    "minimumFrom": 40000,
-    "roundTo": 1000,
-    "perMeter": {
-      "modern": 3950,
-      "scandi_japandi": 3950,
-      "classic": 4600,
-      "country": 4800,
-      "industrial": 5450
-    },
-    "shape": {
-      "straight": 1.0,
-      "l": 1.05,
-      "u": 1.1,
-      "custom": 1.2
-    },
-    "island": {
-      "no": 1.0,
-      "yes": 1.1
-    },
-    "fronts": {
-      "flat": {
-        "painted": 1.0,
-        "veneer": 1.1,
-        "steel": 1.3,
-        "specialty": 1.35
-      },
-      "framed": {
-        "painted": 1.12,
-        "veneer": 1.22
-      }
-    },
-    "adders": {
-      "worktop": {
-        "quartz": 3250,
-        "ceramic": 5100,
-        "natural_stone": 12800,
-        "specialty": 8000
-      },
-      "appliances": {
-        "built_in": {
-          "upper_midrange": 9250,
-          "premium": 17000,
-          "top_tier": 40750
-        },
-        "freestanding": {
-          "upper_midrange": 7050,
-          "premium": 16300,
-          "top_tier": 39250
-        },
-        "own": 0
-      },
-      "hardware": {
-        "steel": 0,
-        "wood": 2600
-      },
-      "sink": {
-        "stainless": 1300,
-        "composite": 1800,
-        "stone": 3800
-      },
-      "tap": {
-        "standard": 900,
-        "boiling": 2400,
-        "filtered": 2100
-      }
-    }
   }
 }

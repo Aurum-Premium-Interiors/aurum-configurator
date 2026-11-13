@@ -1,0 +1,72 @@
+{
+  "version": "2026-11-13",
+  "currency": "EUR",
+  "vatIncluded": true,
+  "minimumFrom": 25000,
+  "roundTo": 1000,
+  "cabinets": {
+    "perMetre": 2400
+  },
+  "layout": {
+    "straight": 1.0,
+    "l": 1.05,
+    "u": 1.1,
+    "custom": 1.2
+  },
+  "island": {
+    "no": 1.0,
+    "yes": 1.1
+  },
+  "fronts": {
+    "flat": {
+      "painted": 1.0,
+      "veneer": 1.35,
+      "steel": 1.8,
+      "specialty": 1.85
+    },
+    "framed": {
+      "painted": 1.12,
+      "veneer": 1.5
+    }
+  },
+  "worktop": {
+    "shareOfLength": 0.8,
+    "fitting": 560,
+    "perMetre": {
+      "quartz": 630,
+      "ceramic": 1065,
+      "natural_stone": 2930,
+      "specialty": 1065
+    }
+  },
+  "drawers": {
+    "perMetre": 2.3,
+    "surchargePerDrawer": {
+      "steel": 0,
+      "wood": 190
+    }
+  },
+  "appliances": {
+    "own": 350,
+    "built_in": {
+      "upper_midrange": 6800,
+      "premium": 17000,
+      "top_tier": 40750
+    },
+    "freestanding": {
+      "upper_midrange": 7050,
+      "premium": 16300,
+      "top_tier": 39250
+    }
+  },
+  "sink": {
+    "stainless": 250,
+    "composite": 600,
+    "stone": 3000
+  },
+  "tap": {
+    "standard": 1090,
+    "boiling": 1350,
+    "filtered": 2100
+  }
+}
