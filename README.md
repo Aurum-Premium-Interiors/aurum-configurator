@@ -17,7 +17,8 @@ pricing backbone, spam protection and privacy page added in v0.4 (13-11-2026).
 | `backend/Code.gs` | the Google Apps Script that receives the leads | Mathieu |
 | `tools/` | checks: price references, lead-script spam rules | — |
 
-Deploy the **`site/` folder only**.
+Deploy the **`site/` folder only**. GitHub Pages does this automatically on every push to `main`
+(`.github/workflows/pages.yml`): https://aurum-premium-interiors.github.io/aurum-configurator/
 
 ## This repo may be public. Keep it that way
 

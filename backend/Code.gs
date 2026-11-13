@@ -23,7 +23,7 @@
  * Until SITE_DATA_URL is set, leads are still saved and Anna is notified, but no client email is sent.
  */
 
-var SITE_DATA_URL = "";                         // e.g. "https://configurator.auruminteriors.nl/data.json"
+var SITE_DATA_URL = "https://aurum-premium-interiors.github.io/aurum-configurator/data.json"; // the live data.json
 var NOTIFY_EMAIL = "anna@auruminteriors.nl";    // Gets a message for every new lead. "" switches it off.
 var SEND_CLIENT_EMAIL = true;                   // Confirmation email to the client. false switches it off.
 var REPLY_TO = "anna@auruminteriors.nl";        // Where the client's reply lands.
