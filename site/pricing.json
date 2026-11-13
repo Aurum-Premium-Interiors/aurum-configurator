@@ -2,7 +2,8 @@
   "version": "2026-11-13",
   "currency": "EUR",
   "vatIncluded": true,
-  "minimumFrom": 25000,
+  "priceFactor": 1.15,
+  "minimumFrom": 29000,
   "roundTo": 1000,
   "cabinets": {
     "perMetre": 2400

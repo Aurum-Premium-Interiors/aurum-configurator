@@ -13,6 +13,7 @@
  *   worktop  = per metre x (metres x share of length) + fitting
  *   drawers  = wood surcharge per drawer x (metres x drawers per metre)
  *   + appliances (market price per package) + sink + tap
+ *   x priceFactor (a commercial adjustment on top of the derived parameters; 1 = none)
  *   -> rounded DOWN to roundTo, never below minimumFrom.
  *
  * The result is deliberately a lower bound: it must never be higher than an L3 quote for the same layout.
@@ -51,13 +52,11 @@
     var sink = pick(p.sink, a.sink, "sink");
     var tap = pick(p.tap, a.tap, "tap");
 
-    var raw = cabinets + worktop + drawers + appliances + sink + tap;
+    var f = p.priceFactor === undefined ? 1 : Number(p.priceFactor);
+    var parts = { cabinets: cabinets * f, worktop: worktop * f, drawers: drawers * f, appliances: appliances * f, sink: sink * f, tap: tap * f };
+    var raw = parts.cabinets + parts.worktop + parts.drawers + parts.appliances + parts.sink + parts.tap;
     var total = Math.max(Math.floor(raw / p.roundTo) * p.roundTo, p.minimumFrom);
-    return {
-      total: total,
-      raw: raw,
-      parts: { cabinets: cabinets, worktop: worktop, drawers: drawers, appliances: appliances, sink: sink, tap: tap }
-    };
+    return { total: total, raw: raw, parts: parts };
   }
 
   return { compute: compute };
